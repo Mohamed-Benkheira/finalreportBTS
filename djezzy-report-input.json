@@ -1,0 +1,436 @@
+{
+  "title_metadata": {
+    "theme": "Design and Implementation of a Resource Assignment and Allocation Platform for Djezzy — Case Study: IT and HR Departments",
+    "host_organization": "Djezzy — Orascom Telecom Algeria",
+    "supervisor": "__SUPERVISOR_NAME__",
+    "students": ["__STUDENT_1__", "__STUDENT_2__"],
+    "promoter": "__PROMOTER_NAME__",
+    "promotion": "__PROMOTION_YEAR__"
+  },
+  "abstract_fr": "Ce travail porte sur la conception et la réalisation d'une plateforme web d'affectation et d'allocation des ressources pour Djezzy. L'objectif principal est de centraliser la gestion des profils employés, des compétences, des disponibilités et des charges de travail, tout en fournissant un workflow d'affectation complet avec traçabilité (audit trail). La solution utilise Laravel 13, Filament 5 et React/Inertia avec Tailwind CSS, et intègre une authentification renforcée (double facteur, clés d'accès).",
+  "abstract_fr_keywords": "Allocation des ressources, Laravel, Filament, React, Inertia, Spatie Permission, Audit trail",
+  "abstract_en": "This project involves the design and implementation of a web-based resource assignment and allocation platform for Djezzy. The main objective is to centralize employee profile management, skills tracking, availability monitoring, and workload distribution, while providing a complete assignment workflow with full audit traceability. The solution is built with Laravel 13, Filament 5, and React/Inertia with Tailwind CSS, and integrates strong authentication mechanisms (two-factor authentication, passkeys) via Laravel Fortify.",
+  "abstract_en_keywords": "Resource Allocation, Laravel, Filament, React, Inertia, Spatie Permission, Audit Trail",
+  "acknowledgements": {
+    "promoter_thanks": "We thank our promoter __PROMOTER_NAME__ for his guidance, valuable advice, and continuous support throughout the development of this project.",
+    "supervisor_thanks": "We also thank our academic supervisor __SUPERVISOR_NAME__ from the institute for her follow-up, availability, and constructive feedback.",
+    "colleagues_thanks": "We express our gratitude to our classmates for their solidarity and support throughout our training at INSFP Rahmania."
+  },
+  "chapter1": {
+    "title": "Generalities on the Web and Web Technologies",
+    "sections": [
+      {
+        "title": "Presentation of the Web",
+        "content": "The web is a system of interlinked hypertextual documents accessed via the Internet using protocols such as HTTP and HTTPS. It evolved from static HTML pages (Web 1.0) to interactive platforms (Web 2.0) and semantic web technologies (Web 3.0). Modern web applications rely on client-server architectures, RESTful APIs, and single-page application (SPA) frameworks to deliver rich user experiences without page reloads.",
+        "subtopics": [
+          "Internet, Intranet, Extranet",
+          "Static and dynamic web pages",
+          "HTTP/HTTPS protocols and client-server model"
+        ],
+        "figures": ["Web architecture overview", "Client-server communication"]
+      },
+      {
+        "title": "Frontend Technologies",
+        "content": "Modern frontend development relies on component-based JavaScript frameworks. React (by Meta) is the most widely adopted, enabling declarative UI composition through reusable components. TypeScript adds static typing to JavaScript for better maintainability. Tailwind CSS is a utility-first CSS framework that enables rapid UI development without writing custom CSS. Inertia.js acts as a bridge between server-side routing (Laravel) and client-side rendering (React), eliminating the need for a separate API layer while preserving SPA behavior. Vite is a modern build tool that provides fast development server startup and optimized production builds via Rollup.",
+        "subtopics": [
+          "React 19 and component-based architecture",
+          "TypeScript for type safety",
+          "Tailwind CSS 4 utility-first styling",
+          "Inertia.js server-driven SPA routing",
+          "Vite 8 build tooling"
+        ]
+      },
+      {
+        "title": "Backend Technologies",
+        "content": "Laravel is a PHP MVC framework providing Eloquent ORM, migrations, middleware, Blade templating, and a rich ecosystem (Fortify for authentication, Spatie Permission for authorization). Filament is an admin panel builder for Laravel that provides CRUD resources, widgets, charts, and role-based access control out of the box. PostgreSQL is the recommended relational database for production, offering ACID compliance, JSON support, and partial unique indexes.",
+        "subtopics": [
+          "Laravel 13 framework and Eloquent ORM",
+          "Filament 5 admin panel builder",
+          "PostgreSQL and SQLite databases"
+        ]
+      },
+      {
+        "title": "Authentication and Authorization",
+        "content": "Laravel Fortify provides authentication scaffolding including registration, login, password reset, email verification, and two-factor authentication (2FA). Passkeys (WebAuthn) offer passwordless authentication using public-key cryptography. Spatie Laravel Permission implements role-based access control (RBAC) with granular permissions assigned to roles (super-admin, admin, hr, resource-manager, project-manager, employee).",
+        "figures": ["RBAC permission model"]
+      }
+    ]
+  },
+  "chapter2": {
+    "title": "Preliminary Study",
+    "organization_presentation": "Djezzy (Orascom Telecom Algeria) is one of Algeria's leading telecommunications operators, providing mobile, internet, and enterprise services to millions of subscribers. The IT and HR departments jointly manage employee assignments across projects, requiring coordination between organizational structure (business units, departments, teams), employee profiles (skills, certifications, languages, availability), and project requirements. Resource allocation is currently performed manually using spreadsheets and email communication.",
+    "problem_statement": "How to centralize and streamline the resource assignment process across IT and non-IT projects? How to track employee workload and availability in real time? How to maintain a complete audit trail of assignment decisions? How to enforce a single active assignment per project while supporting multiple assignment modes (single employee, multiple employees, team, department)?",
+    "objectives": [
+      "Centralize organizational structure management (business units, departments, teams, positions, locations)",
+      "Build comprehensive employee profiles with skills, certifications, languages, availability status, and workload tracking",
+      "Implement a project requirement system with typed requirements (skill, certification, language, experience, position, department, location, availability)",
+      "Design an assignment workflow with status machine (Pending → Approved → Active → Completed) plus Rejected and Cancelled states",
+      "Enforce single-active-assignment-per-project rule via database-level partial unique index",
+      "Provide full audit trail with Actor, Action, Timestamp, Old/New values, IP and User-Agent tracking",
+      "Build an admin dashboard with statistical widgets, workload charts, and alert tables",
+      "Implement role-based access control with 6 roles and 50+ granular permissions",
+      "Secure authentication with 2FA and passkey support via Laravel Fortify"
+    ],
+    "existing_system_analysis": "Current resource allocation relies on Excel spreadsheets shared via email between HR managers and project managers. Employee skills and certifications are tracked informally. Workload is estimated verbally during weekly meetings. Assignment history is not recorded. There is no mechanism to detect when an employee is over-allocated across multiple projects simultaneously.",
+    "existing_system_critique": [
+      "No centralized employee profile with verifiable skills and certifications",
+      "Workload estimation is subjective with no quantitative tracking",
+      "No audit trail for assignment decisions or status changes",
+      "Risk of over-allocation goes undetected until performance degrades",
+      "No enforcement of single-active-assignment rule — multiple managers can claim the same employee",
+      "Assignment history is lost when spreadsheets are overwritten or deleted"
+    ]
+  },
+  "chapter3": {
+    "title": "Analysis and Design",
+    "actors": [
+      {
+        "name": "Super Admin",
+        "description": "Full system access: manages users, roles, permissions, and all organizational entities"
+      },
+      {
+        "name": "Admin",
+        "description": "Manages organizational structure, employees, projects, and assignments with broad permissions"
+      },
+      {
+        "name": "HR Manager",
+        "description": "Manages employee profiles, skills, certifications, languages, availability, and workload tracking"
+      },
+      {
+        "name": "Resource Manager",
+        "description": "Creates and manages assignments, tracks workload distribution, and monitors availability"
+      },
+      {
+        "name": "Project Manager",
+        "description": "Creates projects, defines requirements, submits projects for staffing, and tracks project status"
+      },
+      {
+        "name": "Employee",
+        "description": "Views assigned projects and updates personal profile information"
+      }
+    ],
+    "roles_and_permissions": {
+      "roles": ["super-admin", "admin", "hr", "resource-manager", "project-manager", "employee"],
+      "permissions_count": 52,
+      "permission_groups": [
+        "Business Units (view/create/update/delete)",
+        "Departments (view/create/update/delete)",
+        "Teams (view/create/update/delete)",
+        "Positions (view/create/update/delete)",
+        "Locations (view/create/update/delete)",
+        "Employees (view/create/update/delete)",
+        "Skills (view/create/update/delete)",
+        "Certifications (view/create/update/delete)",
+        "Languages (view/create/update/delete)",
+        "Projects (view/create/update/delete)",
+        "Assignments (view/create/update/delete/approve)",
+        "Recommendations (view)",
+        "Users (view/create/update/delete)",
+        "Roles (view/create/update/delete)"
+      ]
+    },
+    "use_cases": [
+      {
+        "name": "Authentication with 2FA and Passkeys",
+        "actors": "All Users",
+        "description": "User logs in with email/password. If 2FA is enabled, a TOTP code or recovery code is required. Passkeys offer passwordless login via WebAuthn.",
+        "preconditions": "User has valid account. 2FA may be enabled. Passkey may be registered.",
+        "postconditions": "User is authenticated and redirected to dashboard or admin panel based on role.",
+        "main_flow": [
+          "User navigates to login page and enters email and password",
+          "System validates credentials via Laravel Fortify",
+          "If 2FA is enabled, system displays TOTP challenge",
+          "User enters 6-digit code or recovery code",
+          "System verifies code and creates authenticated session"
+        ],
+        "alternative_flow": "Passkey login: system triggers WebAuthn challenge, user verifies via biometric/security key, session is created without password."
+      },
+      {
+        "name": "Manage Organization Structure",
+        "actors": "Super Admin, Admin",
+        "description": "Admin creates and manages business units, departments, teams, positions, and locations with hierarchical relationships (departments belong to business units, teams belong to departments, positions belong to teams).",
+        "preconditions": "User authenticated with appropriate permissions.",
+        "postconditions": "Organization structure is updated with new or modified entities.",
+        "main_flow": [
+          "Admin navigates to organization section in Filament panel",
+          "Admin selects entity type (business unit, department, team, position, or location)",
+          "System displays list view with search, filters, and sort",
+          "Admin creates or edits entity with form validation",
+          "System saves changes with audit log entry"
+        ],
+        "alternative_flow": "Invalid parent reference triggers validation error. Deleting a parent with children triggers restrictOnDelete constraint."
+      },
+      {
+        "name": "Create and Manage Employees",
+        "actors": "Super Admin, Admin, HR Manager",
+        "description": "HR creates employee profiles linked to organizational entities, then enriches with skills, certifications, languages, availability status, and workload data.",
+        "preconditions": "User authenticated with employee management permissions. Organizational structure exists.",
+        "postconditions": "Employee profile is created with complete profile data.",
+        "main_flow": [
+          "HR navigates to employee management in Filament panel",
+          "HR creates new employee with personal info, department, position, location, employment type and status",
+          "HR adds skills with proficiency levels (beginner/intermediate/advanced/native)",
+          "HR adds certifications with verification status (pending/verified/rejected/expired)",
+          "HR adds languages with proficiency levels",
+          "HR sets availability status (available/partially available/unavailable/on leave) and workload percentages"
+        ],
+        "alternative_flow": "Editing employee linked to active assignment triggers warning. Soft-deleting employee preserves assignment history."
+      },
+      {
+        "name": "Create Project with Requirements",
+        "actors": "Super Admin, Admin, Project Manager",
+        "description": "Project manager creates a project, defines category, assignment mode, priority, dates, confidentiality level, and adds typed requirements (skills, certifications, languages, experience, position, department, location, availability).",
+        "preconditions": "User authenticated with project management permissions. Project categories exist.",
+        "postconditions": "Project is created in Draft status with defined requirements.",
+        "main_flow": [
+          "PM navigates to project management in Filament panel",
+          "PM creates new project with name, description, category, assignment mode, priority, status, dates, and confidentiality level",
+          "System saves project in Draft status",
+          "PM adds project requirements (skill, certification, language, or other requirement types) with minimum level and weight",
+          "System validates and stores requirements"
+        ],
+        "alternative_flow": "Changing assignment mode after assignment exists triggers validation. Status transitions follow: Draft → Submitted → Under Review → Staffing → Assigned → In Progress → Completed."
+      },
+      {
+        "name": "Create Assignment with Status Workflow",
+        "actors": "Super Admin, Admin, Resource Manager",
+        "description": "Resource manager creates an assignment linking employees or teams to a project, then progresses through status machine: Pending → Approved → Active → Completed (or Rejected/Cancelled at various stages).",
+        "preconditions": "User authenticated with assignment permissions. Project exists. Employees are active.",
+        "postconditions": "Assignment is created and status history is recorded. Single-active-per-project rule is enforced.",
+        "main_flow": [
+          "RM navigates to assignment management in Filament panel",
+          "RM creates new assignment for a project with assignment type (employee/team/department)",
+          "System validates no current approved or active assignment exists for the project (partial unique index)",
+          "RM assigns members (employees) with allocation percentage, responsibility, and dates",
+          "RM assigns teams if applicable",
+          "Assignment starts in Pending status",
+          "Approver transitions assignment to Approved (records approver and timestamp)",
+          "RM activates the assignment (transitions to Active)",
+          "Upon completion, RM marks assignment Completed (triggers left_at date on all members)"
+        ],
+        "alternative_flow": "Transition from Pending to Rejected or Cancelled records reason in status history. Cancellation allowed from Pending, Approved, or Active status only. DomainException thrown for invalid transitions."
+      },
+      {
+        "name": "View Dashboard Analytics",
+        "actors": "All authenticated users",
+        "description": "Dashboard displays key metrics: total employees by department, workload vs availability chart, projects by status, projects needing staffing, over-allocated employees, expiring certifications, and recent activity log.",
+        "preconditions": "User authenticated.",
+        "postconditions": "Dashboard displays current state of organization and assignments.",
+        "main_flow": [
+          "User navigates to dashboard (Filament panel for admin users, public dashboard for regular users)",
+          "System loads StatsOverview widget (total counts)",
+          "System loads EmployeesByDepartmentChart (bar chart)",
+          "System loads AllocationVsAvailabilityChart (grouped bar: workload vs availability per department)",
+          "System loads ProjectsByStatusChart (doughnut chart)",
+          "System loads alert tables: ProjectsNeedingStaffing, OverAllocatedEmployees, ExpiringCertifications",
+          "System loads RecentActivityTable (audit log entries)"
+        ],
+        "alternative_flow": "Empty data states show placeholder messages. Charts are rendered client-side via Filament ChartWidget."
+      },
+      {
+        "name": "Audit Trail",
+        "actors": "Super Admin, Admin",
+        "description": "Every assignment action (created, approved, activated, completed, rejected, cancelled) is recorded in audit_logs with actor ID, action, auditable type and ID, old/new values, IP address, and user agent.",
+        "preconditions": "AuditService is injected into AssignmentService.",
+        "postconditions": "Audit log entry is created for every state transition.",
+        "main_flow": [
+          "Assignment state transition occurs (e.g., approve)",
+          "AssignmentService calls AuditService.assignmentTransition()",
+          "AuditService creates AuditLog record with action, old_values, new_values, IP, user_agent",
+          "Record is persisted to audit_logs table"
+        ],
+        "alternative_flow": "Manual log entries can be created via AuditService.log() for any model and action."
+      }
+    ],
+    "classes": [
+      {
+        "name": "User",
+        "attributes": "id, name, email, password, email_verified_at, two_factor_secret, two_factor_recovery_codes, remember_token, created_at, updated_at",
+        "methods": "assignRole(), hasRole(), can(), delete()"
+      },
+      {
+        "name": "Employee",
+        "attributes": "id, user_id, matricule, first_name, last_name, email, phone, hire_date, employment_status, employment_type, department_id, position_id, location_id, team_id, manager_id, created_at, updated_at, deleted_at",
+        "methods": "skills(), certifications(), languages(), availabilities(), workloads(), assignments(), fullName()"
+      },
+      {
+        "name": "Department",
+        "attributes": "id, business_unit_id, name, code, description, head_id, created_at, updated_at, deleted_at",
+        "methods": "businessUnit(), employees(), teams()"
+      },
+      {
+        "name": "Project",
+        "attributes": "id, name, code, description, project_category_id, assignment_mode, priority, status, start_date, target_end_date, actual_end_date, estimated_effort_hours, confidentiality_level, requested_by, project_manager_id, created_at, updated_at, deleted_at",
+        "methods": "assignments(), requirements(), category(), evaluations()"
+      },
+      {
+        "name": "Assignment",
+        "attributes": "id, project_id, assigned_by, approved_by, assignment_type, status, assigned_at, approved_at, start_date, end_date, notes, created_at, updated_at",
+        "methods": "project(), members(), teams(), statusHistory()"
+      },
+      {
+        "name": "Skill",
+        "attributes": "id, skill_category_id, name, code, description, created_at, updated_at, deleted_at",
+        "methods": "category(), employees(), projects()"
+      },
+      {
+        "name": "Certification",
+        "attributes": "id, name, code, issuer, validity_months, created_at, updated_at, deleted_at",
+        "methods": "employees()"
+      },
+      {
+        "name": "Language",
+        "attributes": "id, name, code, created_at, updated_at, deleted_at",
+        "methods": "employees()"
+      },
+      {
+        "name": "AuditLog",
+        "attributes": "id, user_id, action, auditable_type, auditable_id, old_values, new_values, ip_address, user_agent, created_at",
+        "methods": "user(), auditable()"
+      },
+      {
+        "name": "AssignmentStatusHistory",
+        "attributes": "id, assignment_id, old_status, new_status, changed_by, reason, created_at",
+        "methods": "assignment(), changedByUser()"
+      }
+    ],
+    "database_tables": [
+      {
+        "name": "users",
+        "columns": [
+          {"name": "id", "type": "BIGINT", "nullable": "No", "description": "Primary key"},
+          {"name": "name", "type": "VARCHAR(255)", "nullable": "No", "description": "Full name"},
+          {"name": "email", "type": "VARCHAR(255)", "nullable": "No", "description": "Unique email address"},
+          {"name": "password", "type": "VARCHAR(255)", "nullable": "No", "description": "Hashed password"},
+          {"name": "email_verified_at", "type": "TIMESTAMP", "nullable": "Yes", "description": "Email verification timestamp"},
+          {"name": "two_factor_secret", "type": "TEXT", "nullable": "Yes", "description": "Encrypted 2FA TOTP secret"},
+          {"name": "two_factor_recovery_codes", "type": "TEXT", "nullable": "Yes", "description": "Encrypted recovery codes"},
+          {"name": "remember_token", "type": "VARCHAR(100)", "nullable": "Yes", "description": "Remember me token"}
+        ]
+      },
+      {
+        "name": "employees",
+        "columns": [
+          {"name": "id", "type": "BIGINT", "nullable": "No", "description": "Primary key"},
+          {"name": "user_id", "type": "BIGINT", "nullable": "Yes", "description": "FK to users (nullable)"},
+          {"name": "matricule", "type": "VARCHAR(50)", "nullable": "No", "description": "Unique employee ID"},
+          {"name": "first_name", "type": "VARCHAR(255)", "nullable": "No", "description": "First name"},
+          {"name": "last_name", "type": "VARCHAR(255)", "nullable": "No", "description": "Last name"},
+          {"name": "email", "type": "VARCHAR(255)", "nullable": "Yes", "description": "Work email"},
+          {"name": "phone", "type": "VARCHAR(50)", "nullable": "Yes", "description": "Phone number"},
+          {"name": "hire_date", "type": "DATE", "nullable": "No", "description": "Hire date"},
+          {"name": "employment_status", "type": "ENUM", "nullable": "No", "description": "active, on_leave, suspended, resigned, retired"},
+          {"name": "employment_type", "type": "ENUM", "nullable": "No", "description": "full_time, part_time, contractor, intern"},
+          {"name": "department_id", "type": "BIGINT", "nullable": "No", "description": "FK to departments"},
+          {"name": "position_id", "type": "BIGINT", "nullable": "No", "description": "FK to positions"},
+          {"name": "location_id", "type": "BIGINT", "nullable": "Yes", "description": "FK to locations"},
+          {"name": "team_id", "type": "BIGINT", "nullable": "Yes", "description": "FK to teams"},
+          {"name": "manager_id", "type": "BIGINT", "nullable": "Yes", "description": "FK to employees (self-referencing)"},
+          {"name": "deleted_at", "type": "TIMESTAMP", "nullable": "Yes", "description": "Soft delete timestamp"}
+        ]
+      },
+      {
+        "name": "assignments",
+        "columns": [
+          {"name": "id", "type": "BIGINT", "nullable": "No", "description": "Primary key"},
+          {"name": "project_id", "type": "BIGINT", "nullable": "No", "description": "FK to projects"},
+          {"name": "assigned_by", "type": "BIGINT", "nullable": "No", "description": "FK to users"},
+          {"name": "approved_by", "type": "BIGINT", "nullable": "Yes", "description": "FK to users (approver)"},
+          {"name": "assignment_type", "type": "ENUM", "nullable": "No", "description": "employee, team, department, mixed"},
+          {"name": "status", "type": "ENUM", "nullable": "No", "description": "pending, approved, active, completed, rejected, cancelled"},
+          {"name": "assigned_at", "type": "TIMESTAMP", "nullable": "No", "description": "Assignment creation timestamp"},
+          {"name": "approved_at", "type": "TIMESTAMP", "nullable": "Yes", "description": "Approval timestamp"},
+          {"name": "start_date", "type": "DATE", "nullable": "Yes", "description": "Assignment start date"},
+          {"name": "end_date", "type": "DATE", "nullable": "Yes", "description": "Assignment end date"},
+          {"name": "notes", "type": "TEXT", "nullable": "Yes", "description": "Free-form notes"},
+          {"name": "created_at", "type": "TIMESTAMP", "nullable": "No", "description": "Record creation timestamp"},
+          {"name": "updated_at", "type": "TIMESTAMP", "nullable": "No", "description": "Record update timestamp"}
+        ]
+      },
+      {
+        "name": "assignment_members",
+        "columns": [
+          {"name": "id", "type": "BIGINT", "nullable": "No", "description": "Primary key"},
+          {"name": "assignment_id", "type": "BIGINT", "nullable": "No", "description": "FK to assignments (cascade delete)"},
+          {"name": "employee_id", "type": "BIGINT", "nullable": "No", "description": "FK to employees (restrict delete)"},
+          {"name": "responsibility", "type": "VARCHAR(255)", "nullable": "Yes", "description": "Role description"},
+          {"name": "allocation_percentage", "type": "DECIMAL(5,2)", "nullable": "Yes", "description": "Allocation % (CHECK 0-100)"},
+          {"name": "allocated_hours", "type": "DECIMAL(10,2)", "nullable": "Yes", "description": "Allocated hours"},
+          {"name": "joined_at", "type": "DATE", "nullable": "Yes", "description": "Join date"},
+          {"name": "left_at", "type": "DATE", "nullable": "Yes", "description": "Leave date (set on completion)"}
+        ]
+      },
+      {
+        "name": "audit_logs",
+        "columns": [
+          {"name": "id", "type": "BIGINT", "nullable": "No", "description": "Primary key"},
+          {"name": "user_id", "type": "BIGINT", "nullable": "No", "description": "FK to users (actor)"},
+          {"name": "action", "type": "VARCHAR(255)", "nullable": "No", "description": "Action identifier (e.g. assignment.approved)"},
+          {"name": "auditable_type", "type": "VARCHAR(255)", "nullable": "No", "description": "Morph type"},
+          {"name": "auditable_id", "type": "BIGINT", "nullable": "No", "description": "Morph ID"},
+          {"name": "old_values", "type": "JSON", "nullable": "Yes", "description": "Previous state"},
+          {"name": "new_values", "type": "JSON", "nullable": "Yes", "description": "New state"},
+          {"name": "ip_address", "type": "VARCHAR(45)", "nullable": "Yes", "description": "Client IP address"},
+          {"name": "user_agent", "type": "TEXT", "nullable": "Yes", "description": "Client user agent string"}
+        ]
+      }
+    ],
+    "deployment": "Laravel 13 monolith deployed on Apache/Nginx with PHP-FPM. Filament 5 admin panel at /admin path. React/Inertia frontend for public dashboard and settings pages. PostgreSQL recommended for production (SQLite for local development). Vite 8 for asset compilation. Authentication via Fortify with optional 2FA and passkeys."
+  },
+  "chapter4": {
+    "title": "Implementation and Validation",
+    "languages_and_tools": [
+      {"name": "PHP 8.3", "description": "Server-side scripting language powering Laravel"},
+      {"name": "Laravel 13.17", "description": "PHP MVC framework with Eloquent ORM, migrations, middleware"},
+      {"name": "Filament 5.1", "description": "Admin panel builder for Laravel with CRUD resources, widgets, charts"},
+      {"name": "React 19", "description": "Component-based JavaScript library for frontend UI"},
+      {"name": "TypeScript", "description": "Typed superset of JavaScript for type safety"},
+      {"name": "Inertia.js 3.0", "description": "Server-driven SPA bridge between Laravel routing and React rendering"},
+      {"name": "Tailwind CSS 4", "description": "Utility-first CSS framework for rapid UI development"},
+      {"name": "Vite 8.0", "description": "Modern build tool with HMR and optimized production builds"},
+      {"name": "PostgreSQL", "description": "Recommended production relational database with partial unique indexes"},
+      {"name": "SQLite", "description": "Lightweight database used for local development and testing"},
+      {"name": "Spatie Laravel Permission", "description": "Role-based access control package with granular permissions"},
+      {"name": "Laravel Fortify", "description": "Authentication scaffolding with 2FA and passkey support"},
+      {"name": "PHPUnit / Pest", "description": "PHP testing frameworks for unit and feature tests"},
+      {"name": "Radix UI", "description": "Headless UI component primitives for React (dialogs, dropdowns, tooltips)"},
+      {"name": "Lucide React", "description": "Icon library for React applications"},
+      {"name": "Sonner", "description": "Toast notification library for React"},
+      {"name": "Draw.io", "description": "Diagram creation tool for UML and architecture diagrams"}
+    ],
+    "interfaces": [
+      {"name": "Filament Admin Dashboard", "description": "Dashboard with 8 widgets: StatsOverview (KPIs), EmployeesByDepartmentChart (bar), AllocationVsAvailabilityChart (grouped bar), ProjectsByStatusChart (doughnut), ProjectsNeedingStaffingTable, OverAllocatedEmployeesTable, ExpiringCertificationsTable, RecentActivityTable"},
+      {"name": "Organization Management", "description": "Filament CRUD resources for BusinessUnits, Departments, Teams, Positions, Locations with hierarchical navigation"},
+      {"name": "Employee Management", "description": "Filament CRUD resource for Employees with relation managers for Skills, Certifications, Languages, Availability, Workloads"},
+      {"name": "Project Management", "description": "Filament CRUD resource for Projects with requirement sub-resources (skills, certifications, languages), category assignment, and status workflow"},
+      {"name": "Assignment Management", "description": "Filament CRUD resource for Assignments with status workflow buttons, MembersRelationManager, TeamsRelationManager, StatusHistoryRelationManager"},
+      {"name": "User and Role Management", "description": "Filament CRUD resources for Users and Roles with Spatie Permission integration"},
+      {"name": "Settings Pages (React/Inertia)", "description": "Profile management (edit name, email, delete account), Appearance settings (light/dark/system theme), Security settings (password change, 2FA enable/disable, passkey management)"},
+      {"name": "Auth Pages (React/Inertia)", "description": "Login, Register, Forgot Password, Reset Password, Email Verification, Two-Factor Challenge, Confirm Password"}
+    ],
+    "testing": {
+      "architecture": "Feature tests organized by domain: Auth (login, registration, password reset, 2FA, email verification), Settings (profile update, security/passkeys), Domain (AssignmentService business rules, data integrity, organization, database seeder), Admin (panel access smoke test), Dashboard (widget rendering)",
+      "test_results": [
+        {"category": "Auth Tests", "files": 7, "tests": 25, "passed": 25, "details": "AuthenticationTest (6), EmailVerificationTest (6), PasswordResetTest (5), RegistrationTest (2), TwoFactorChallengeTest (2), VerificationNotificationTest (2), PasswordConfirmationTest (2)"},
+        {"category": "Settings Tests", "files": 2, "tests": 10, "passed": 10, "details": "ProfileUpdateTest (5), SecurityTest (5)"},
+        {"category": "Domain Tests", "files": 4, "tests": 26, "passed": 26, "details": "AssignmentServiceTest (9), DataIntegrityTest (7), OrganizationTest (6), DatabaseSeederTest (4)"},
+        {"category": "Admin Tests", "files": 1, "tests": 4, "passed": 4, "details": "AdminPanelSmokeTest (4)"},
+        {"category": "Dashboard Tests", "files": 1, "tests": 2, "passed": 2, "details": "DashboardTest (2)"},
+        {"category": "Unit Tests", "files": 1, "tests": 1, "passed": 1, "details": "ExampleTest (1)"}
+      ],
+      "total": {"files": 16, "tests": 68, "passed": 68}
+    }
+  },
+  "conclusion": {
+    "summary": "This project successfully delivered a centralized resource assignment and allocation platform for Djezzy, replacing manual spreadsheet-based workflows with a secure, auditable, and role-based web application. The system manages 37 database tables covering organizational structure, employee profiles with skills/certifications/languages, project requirements, and a complete assignment lifecycle with status machine (Pending → Approved → Active → Completed) and database-enforced single-active-assignment-per-project rule. Full audit trail and workload analytics provide transparency and accountability.",
+    "limitations": "The automated recommendation engine is intentionally postponed to a future phase. Real-time notifications for assignment status changes are not yet implemented. The platform currently has no mobile-responsive interface for field access. Dashboard analytics are limited to aggregate views without drill-down capabilities.",
+    "perspectives": [
+      "Implement AI-powered recommendation engine for automated skill-based resource matching",
+      "Add real-time notifications via WebSocket/Laravel Echo for assignment status changes",
+      "Develop a responsive mobile interface or dedicated mobile app for field access",
+      "Integrate with HR information systems (HRIS) for automatic employee data synchronization",
+      "Add workload forecasting and capacity planning projections",
+      "Implement multi-language support (Arabic/French) for the admin panel"
+    ]
+  }
+}

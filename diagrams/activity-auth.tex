@@ -1,0 +1,36 @@
+% activity-auth.tex — Fig 3.2 : Activity diagram — Authentication
+\begin{tikzpicture}[
+  >=Stealth, node distance=0.9cm and 1.6cm,
+  act/.style={draw, rounded corners=3pt, minimum width=4.4cm, minimum height=0.8cm, align=center, font=\small},
+  dec/.style={draw, diamond, aspect=2.1, inner sep=1pt, align=center, font=\scriptsize},
+  start/.style={circle, fill=black, inner sep=0pt, minimum size=3mm},
+  endnode/.style={circle, draw, thick, inner sep=0pt, minimum size=3mm}
+]
+\node[start] (s) {};
+\node[act, below=0.8cm of s] (a1) {Open login page};
+\node[act, below=0.8cm of a1] (a2) {Enter email and password};
+\node[act, below=0.8cm of a2] (a3) {Validate via Fortify};
+\node[dec, below=0.8cm of a3] (d1) {Valid?};
+\node[act, below left=1.0cm and 0.8cm of d1] (a4) {Show error};
+\node[dec, below=0.85cm of d1] (d2) {2FA enabled?};
+\node[act, below right=1.0cm and 0.6cm of d2] (a5) {TOTP / recovery code};
+\node[dec, below=0.85cm of d2] (d3) {Code OK?};
+\node[act, below left=1.0cm and 0.6cm of d3] (a6) {Reject};
+\node[act, below=0.85cm of d3] (a7) {Create session;
+ redirect by role};
+\node[endnode, below=0.8cm of a7] (e) {};
+\draw[-{Stealth}] (s) -- (a1);
+\draw[-{Stealth}] (a1) -- (a2);
+\draw[-{Stealth}] (a2) -- (a3);
+\draw[-{Stealth}] (a3) -- (d1);
+\draw[-{Stealth}] (d1) -- node[above, font=\scriptsize]{No} (a4);
+\draw[-{Stealth}] (a4.south) -- ++(0,-0.4) -| (a1.west);
+\draw[-{Stealth}] (d1) -- node[left, font=\scriptsize]{Yes} (d2);
+\draw[-{Stealth}] (d2) -- node[above, font=\scriptsize]{No} (a7);
+\draw[-{Stealth}] (d2) -- node[above, font=\scriptsize]{Yes} (a5);
+\draw[-{Stealth}] (a5) -- (d3);
+\draw[-{Stealth}] (d3) -- node[above, font=\scriptsize]{No} (a6);
+\draw[-{Stealth}] (a6.south) -- ++(0,-0.4) -| (a1.west);
+\draw[-{Stealth}] (d3) -- node[left, font=\scriptsize]{Yes} (a7);
+\draw[-{Stealth}] (a7) -- (e);
+\end{tikzpicture}

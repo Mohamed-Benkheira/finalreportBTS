@@ -1,0 +1,24 @@
+# LaTeX build artifacts
+*.aux
+*.log
+*.lof
+*.lot
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Local toolchain (large binaries / virtualenv) — reinstall tectonic + venv to build
+tools/tectonic
+tools/pdfvenv/
+
+# Agent tooling + reference materials (not part of the report)
+.agents/
+.gemini/
+report-examplesAndRules/
+report-template/
+
+# OS/editor noise
+*:Zone.Identifier
+.DS_Store

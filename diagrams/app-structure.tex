@@ -1,0 +1,23 @@
+% app-structure.tex — Fig 4.1 : Layered architecture of the application
+\begin{tikzpicture}[
+  >=Stealth, node distance=0.7cm and 0.9cm,
+  layer/.style={draw, rounded corners=4pt, minimum width=13cm, minimum height=1.3cm, align=center, font=\small},
+  comp/.style={draw, rounded corners=3pt, minimum width=3.2cm, minimum height=0.8cm, align=center, font=\scriptsize}
+]
+\node[layer] (pres) {Presentation layer --- Filament Admin panel,\\React portal (Inertia), REST API, Middleware};
+\node[layer, below=of pres] (app) {Application layer --- Services, Policies,\\Form requests, Jobs, Events};
+\node[layer, below=of app] (dom) {Domain layer --- Models (20), Enums,\\Casts, Observers, Relations};
+\node[layer, below=of dom] (inf) {Infrastructure --- MySQL, Redis,\\Mail, Storage, AuditService};
+\node[comp, xshift=-7.45cm] (web) {Web browser};
+\node[comp, right=0.7cm of web] (cdn) {Nginx server};
+\node[comp, right=0.7cm of cdn] (php) {PHP-FPM};
+\node[comp, right=0.7cm of php] (sql) {MySQL};
+\draw[-{Stealth}] (pres.south) -- (app.north);
+\draw[-{Stealth}] (app.south) -- (dom.north);
+\draw[-{Stealth}] (dom.south) -- (inf.north);
+\draw[{Stealth}-{Stealth}] (pres) -- node[right, font=\tiny]{} (inf);
+\draw[-{Stealth}] (web) -- (cdn);
+\draw[-{Stealth}] (cdn) -- (php);
+\draw[-{Stealth}] (php) -- (sql);
+\draw[{Stealth}-{Stealth}] (inf) to[out=-90, in=90] node[right, font=\tiny]{deployment runtime} (php);
+\end{tikzpicture}

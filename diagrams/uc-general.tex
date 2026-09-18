@@ -1,0 +1,52 @@
+% uc-general.tex — Fig 3.1 : Use case diagram of the platform
+% Actors are drawn with the standard UML stick-man notation.
+\newcommand{\stickman}[3]{% #1=name #2=x #3=y
+  \coordinate (#1) at (#2,#3);
+  \draw[line width=0.7pt] (#2,#3) circle [radius=0.13cm];
+  \draw[line width=0.7pt] (#2,{#3-0.13}) -- (#2,{#3-0.55});
+  \draw[line width=0.7pt] ({#2-0.38},{#3-0.30}) -- ({#2+0.38},{#3-0.30});
+  \draw[line width=0.7pt] (#2,{#3-0.55}) -- ({#2-0.30},{#3-0.95});
+  \draw[line width=0.7pt] (#2,{#3-0.55}) -- ({#2+0.30},{#3-0.95});
+}
+\begin{tikzpicture}[
+  >=Stealth, scale=1.0,
+  uc/.style={draw, ellipse, align=center, font=\footnotesize, inner sep=2.5pt, minimum width=3.0cm, minimum height=1.15cm},
+  box/.style={draw={gray!60}, line width=1pt, dashed, fill={gray!6}, rounded corners=6pt}
+]
+% Actors - left side (UML stick figures)
+\stickman{hr}{-2.2}{-1.8}
+\node[anchor=north, font=\scriptsize\bfseries, align=center, text width=1.8cm] at (-2.2,-2.85) {HR\\Manager};
+\stickman{adm}{-2.2}{-3.8}
+\node[anchor=north, font=\scriptsize\bfseries, align=center, text width=1.8cm] at (-2.2,-4.85) {Admin};
+\stickman{sa}{-2.2}{-5.8}
+\node[anchor=north, font=\scriptsize\bfseries, align=center, text width=1.8cm] at (-2.2,-6.85) {Super\\Admin};
+% Actors - right side (UML stick figures)
+\stickman{rm}{11.9}{-1.8}
+\node[anchor=north, font=\scriptsize\bfseries, align=center, text width=1.8cm] at (11.9,-2.85) {Resource\\Manager};
+\stickman{pm}{11.9}{-3.8}
+\node[anchor=north, font=\scriptsize\bfseries, align=center, text width=1.8cm] at (11.9,-4.85) {Project\\Manager};
+\stickman{emp}{11.9}{-5.8}
+\node[anchor=north, font=\scriptsize\bfseries, align=center, text width=1.8cm] at (11.9,-6.85) {Employee};
+% Use cases grid
+\node[uc] (uc1) at (1.5,-1.8) {Authenticate\\(2FA / passkey)};
+\node[uc] (uc2) at (4.6,-1.8) {Manage Org\\Structure};
+\node[uc] (uc3) at (7.7,-1.8) {Manage\\Employees};
+\node[uc] (uc4) at (1.5,-3.8) {Create Project\\+ Requirements};
+\node[uc] (uc5) at (4.6,-3.8) {Create\\Assignment};
+\node[uc] (uc6) at (7.7,-3.8) {View\\Dashboard};
+\node[uc] (uc7) at (1.5,-5.8) {Audit Trail};
+\node[uc] (uc8) at (4.6,-5.8) {Submit Profile\\Change Request};
+\node[uc] (uc9) at (7.7,-5.8) {Run\\Recommendation};
+% System boundary
+\begin{scope}[on background layer]
+  \node[box, fit=(uc1)(uc2)(uc3)(uc4)(uc5)(uc6)(uc7)(uc8)(uc9), inner sep=0.4cm] (sys) {};
+  \node[font=\footnotesize\bfseries, above=0.1cm of sys.north] {Resource Assignment Platform};
+\end{scope}
+% Associations actor - use case (aligned with the actor lists of the use-case tables)
+\foreach \a/\u in {hr/uc1, hr/uc3, hr/uc6, hr/uc8, adm/uc1, adm/uc2, adm/uc3, adm/uc4, adm/uc5, adm/uc6, adm/uc7, adm/uc8, adm/uc9, sa/uc1, sa/uc2, sa/uc3, sa/uc4, sa/uc5, sa/uc6, sa/uc7, sa/uc9}
+  \draw (\a) -- (\u);
+\foreach \a/\u in {rm/uc1, rm/uc5, rm/uc6, rm/uc9, pm/uc1, pm/uc4, pm/uc6, emp/uc1, emp/uc6, emp/uc8}
+  \draw (\a) -- (\u);
+% Extend relationship: Run Recommendation extends Create Assignment
+\draw[<-, dashed] (uc5.east) -- node[above, font=\scriptsize]{$<<$extend$>>$} (uc9.north west);
+\end{tikzpicture}

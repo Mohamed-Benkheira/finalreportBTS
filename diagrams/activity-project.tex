@@ -1,0 +1,29 @@
+% activity-project.tex — Fig 3.5 : Activity diagram — Create project with requirements
+\begin{tikzpicture}[
+  >=Stealth, node distance=0.9cm and 1.6cm,
+  act/.style={draw, rounded corners=3pt, minimum width=4.6cm, minimum height=0.8cm, align=center, font=\small},
+  dec/.style={draw, diamond, aspect=2.1, inner sep=1pt, align=center, font=\scriptsize},
+  start/.style={circle, fill=black, inner sep=0pt, minimum size=3mm},
+  endnode/.style={circle, draw, thick, inner sep=0pt, minimum size=3mm}
+]
+\node[start] (s) {};
+\node[act, below=0.8cm of s] (a1) {Open Project resource in Filament};
+\node[act, below=0.8cm of a1] (a2) {Define metadata (category, mode, dates)};
+\node[act, below=0.8cm of a2] (a3) {Save project (Draft)};
+\node[act, below=0.8cm of a3] (a4) {Add typed requirements};
+\node[dec, below=0.8cm of a4] (d1) {Complete?};
+\node[act, below left=1.1cm and 0.8cm of d1] (a5) {Continue editing};
+\node[act, below=0.85cm of d1] (a6) {Submit project};
+\node[act, below=0.8cm of a6] (a7) {Set status Under Review};
+\node[endnode, below=0.8cm of a7] (e) {};
+\draw[-{Stealth}] (s) -- (a1);
+\draw[-{Stealth}] (a1) -- (a2);
+\draw[-{Stealth}] (a2) -- (a3);
+\draw[-{Stealth}] (a3) -- (a4);
+\draw[-{Stealth}] (a4) -- (d1);
+\draw[-{Stealth}] (d1) -- node[above, font=\scriptsize]{No} (a5);
+\draw[-{Stealth}] (a5.south) -- ++(0,-0.5) -| (a4.west);
+\draw[-{Stealth}] (d1) -- node[left, font=\scriptsize]{Yes} (a6);
+\draw[-{Stealth}] (a6) -- (a7);
+\draw[-{Stealth}] (a7) -- (e);
+\end{tikzpicture}

@@ -1,0 +1,20 @@
+% deployment.tex — Fig 3.21 : Physical deployment diagram
+\begin{tikzpicture}[
+  >=Stealth,
+  box/.style={draw, rounded corners=3pt, minimum width=3.6cm, minimum height=0.9cm, align=center, font=\scriptsize}
+]
+\node[box] (client) at (0,0) {Client browser\\(HTTP / HTTPS)};
+\node[box] (lb) at (4.2,0) {Reverse proxy\\(Nginx)};
+\node[box] (web) at (8.6,0) {Application node\\PHP-FPM / Laravel};
+\node[box] (db) at (13.0,0) {Database\\MySQL/MariaDB};
+\node[box] (redis) at (8.6,-2.4) {Redis\\cache + queue};
+\node[box] (mail) at (13.0,-2.4) {Mail service\\(SMTP)};
+\node[box] (vito) at (4.2,-2.4) {Deployment\\(Vito / VPS)};
+\draw[-{Stealth}] (client) -- node[above, font=\tiny]{REST + Inertia} (lb);
+\draw[-{Stealth}] (lb) -- node[above, font=\tiny]{FastCGI} (web);
+\draw[-{Stealth}] (web) -- node[above, font=\tiny]{PDO} (db);
+\draw[{Stealth}-{Stealth}] (web) -- node[right, font=\tiny]{queries} (redis);
+\draw[{Stealth}-{Stealth}] (db) -- (mail);
+\draw[{Stealth}-{Stealth}] (mail) -- (vito);
+\draw[-{Stealth}, dashed] (web) to[out=180,in=0] node[below, font=\tiny]{deploy} (vito);
+\end{tikzpicture}

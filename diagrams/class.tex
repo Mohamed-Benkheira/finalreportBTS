@@ -1,0 +1,64 @@
+% class.tex — Fig 3.20 : Simplified class diagram of the domain
+\begin{tikzpicture}[
+  >=Stealth, font=\scriptsize,
+  class/.style={rectangle split, rectangle split parts=3, draw, align=center,
+                rectangle split part fill={black!6, white, white},
+                text width=2.6cm, text centered, inner sep=1.5pt}
+]
+\node[class] (ou) at (0,0) {
+  \textbf{OrganizationUnit}\nodepart{second}+ id, name, type, code\newline+ parent\_id
+  \nodepart{third}+ children()\newline+ getPositions()
+};
+\node[class] (emp) at (4.0,0) {
+  \textbf{Employee}\nodepart{second}+ id, name, phone, email\newline+ org\_unit\_id, position\newline+ workload, availability
+  \nodepart{third}+ assignTo()\newline+ matchingScore()
+};
+\node[class] (user) at (7.6,0) {
+  \textbf{User}\nodepart{second}+ email, password\newline+ 2fa\_enabled
+  \nodepart{third}+ authenticate()\newline+ hasRole()
+};
+\node[class] (proj) at (1.8,-3.0) {
+  \textbf{Project}\nodepart{second}+ name, category, mode\newline+ status, dates
+  \nodepart{third}+ addRequirement()\newline+ activate()
+};
+\node[class] (req) at (5.0,-3.0) {
+  \textbf{Requirement}\nodepart{second}+ type, level\newline+ skill\_id
+  \nodepart{third}+ skills()
+};
+\node[class] (asg) at (8.2,-3.0) {
+  \textbf{Assignment}\nodepart{second}+ status, start\_at\newline+ left\_at, approved\_by
+  \nodepart{third}+ approve()\newline+ complete()
+};
+\node[class] (am) at (11.0,-1.5) {
+  \textbf{AssignmentMember}\nodepart{second}+ role, work\_percent\newline+ employee\_id
+  \nodepart{third}+ member()
+};
+\node[class] (run) at (0.0,-6.0) {
+  \textbf{RecommendationRun}\nodepart{second}+ mode, status\newline+ scores
+  \nodepart{third}+ execute()\newline+ rank()
+};
+\node[class] (rc) at (3.0,-6.0) {
+  \textbf{RecommendedCandidate}\nodepart{second}+ score, rank\newline+ employee\_id
+  \nodepart{third}+ employee()
+};
+\node[class] (pcr) at (6.2,-6.0) {
+  \textbf{ProfileChangeRequest}\nodepart{second}+ type, status\newline+ old/new values
+  \nodepart{third}+ apply()\newline+ approve()
+};
+\node[class] (audit) at (9.6,-6.0) {
+  \textbf{AuditLog}\nodepart{second}+ action, subject\newline+ old/new, ip, ua
+  \nodepart{third}+ actor()
+};
+\draw[thick] (emp) -- node[above, font=\tiny]{1} (user) node[midway, below, font=\tiny]{1};
+\draw[-{Stealth}] (emp) -- node[above, font=\tiny]{works in 1} (ou) node[pos=0.35, below, font=\tiny]{*};
+\draw[-{Stealth}] (ou) to[out=200,in=110] node[below, font=\tiny]{self 1} (ou.south west);
+\draw[-{Stealth}] (proj) -- node[above, font=\tiny]{1} node[below, font=\tiny]{*} (req);
+\draw[-{Stealth}] (proj) -- node[above, font=\tiny]{1} node[below, font=\tiny]{*} (asg);
+\draw[-{Stealth}] (asg) -- node[above, font=\tiny]{1} node[below, font=\tiny]{*} (am);
+\draw[-{Stealth}] (am) -- node[above, font=\tiny]{*} node[below, font=\tiny]{1} (emp);
+\draw[-{Stealth}] (run) -- node[above, font=\tiny]{1} node[below, font=\tiny]{*} (rc);
+\draw[-{Stealth}] (rc) -- node[above, font=\tiny]{*} node[below, font=\tiny]{1} (emp);
+\draw[-{Stealth}] (emp) -- node[above, font=\tiny]{1} node[below, font=\tiny]{*} (pcr);
+\draw[-{Stealth}] (user) to[out=0,in=0] node[right, font=\tiny]{actor *} (audit);
+\draw (11.5,-3.2) to[out=0,in=0] (audit.east) node[right, font=\tiny]{audited *};
+\end{tikzpicture}

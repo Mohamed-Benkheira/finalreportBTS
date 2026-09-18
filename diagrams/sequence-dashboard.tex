@@ -1,0 +1,22 @@
+% sequence-dashboard.tex — Fig 3.16 : Sequence — View dashboard analytics
+\begin{tikzpicture}[>=Stealth, font=\scriptsize]
+\def\H{5.6}
+\node (u) at (0.5,0) {User};
+\node (b) at (3.5,0) {Dashboard UI};
+\node (s) at (7.0,0) {ChartService};
+\node (d) at (10.5,0) {Database};
+\draw[dashed] (u.south) -- (0.5,-\H);
+\draw[dashed] (b.south) -- (3.5,-\H);
+\draw[dashed] (s.south) -- (7.0,-\H);
+\draw[dashed] (d.south) -- (10.5,-\H);
+\draw[fill=black!12] (3.35,-0.7) rectangle (3.65,-5.0);
+\draw[fill=black!12] (6.85,-1.3) rectangle (7.15,-4.4);
+\draw[fill=black!12] (10.35,-1.9) rectangle (10.65,-3.8);
+\draw[-{Stealth}] (0.5,-0.8) -- (3.5,-0.8) node[midway,above]{open dashboard};
+\draw[-{Stealth}] (3.5,-1.4) -- (7.0,-1.4) node[midway,above]{load widgets()};
+\draw[-{Stealth}] (7.0,-2.0) -- (10.5,-2.0) node[midway,above]{aggregate queries};
+\draw[-{Stealth}] (10.5,-2.6) -- (7.0,-2.6) node[midway,above]{datasets};
+\draw[-{Stealth}] (7.0,-3.2) -- (3.5,-3.2) node[midway,above]{stats + charts};
+\draw[-{Stealth}] (3.5,-3.8) -- (10.5,-3.8) node[midway,above]{recent audit feed};
+\draw[-{Stealth}] (3.5,-4.4) -- (0.5,-4.4) node[midway,above]{render dashboard};
+\end{tikzpicture}

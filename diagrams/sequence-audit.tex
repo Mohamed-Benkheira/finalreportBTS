@@ -1,0 +1,21 @@
+% sequence-audit.tex — Fig 3.17 : Sequence — Audit trail capture
+\begin{tikzpicture}[>=Stealth, font=\scriptsize]
+\def\H{5.6}
+\node (a) at (0.5,0) {Observer};
+\node (s) at (3.5,0) {AuditService};
+\node (m) at (7.0,0) {Model / Event};
+\node (d) at (10.5,0) {audit\_logs};
+\draw[dashed] (a.south) -- (0.5,-\H);
+\draw[dashed] (s.south) -- (3.5,-\H);
+\draw[dashed] (m.south) -- (7.0,-\H);
+\draw[dashed] (d.south) -- (10.5,-\H);
+\draw[fill=black!12] (3.35,-0.7) rectangle (3.65,-5.0);
+\draw[fill=black!12] (10.35,-1.9) rectangle (10.65,-3.8);
+\draw[-{Stealth}] (0.5,-0.8) -- (3.5,-0.8) node[midway,above]{model event fired};
+\draw[-{Stealth}] (3.5,-1.4) -- (7.0,-1.4) node[midway,above]{read old + new state};
+\draw[-{Stealth}] (3.5,-2.0) -- (10.5,-2.0) node[midway,above]{store(actor, action, values)};
+\draw[-{Stealth}] (10.5,-2.6) -- (3.5,-2.6) node[midway,above]{saved};
+\draw[-{Stealth}] (3.5,-3.2) -- (7.0,-3.2) node[midway,above]{attach IP + user-agent};
+\draw[-{Stealth}] (3.5,-3.8) -- (10.5,-3.8) node[midway,above]{persist metadata};
+\draw[-{Stealth}] (3.5,-4.4) -- (0.5,-4.4) node[midway,above]{log complete};
+\end{tikzpicture}

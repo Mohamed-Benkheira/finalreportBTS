@@ -1,0 +1,274 @@
+{
+  "title_metadata": {
+    "theme": "Design and development of a web application for managing IT support requests and monitoring the computer equipment fleet - Case study: IT Support Service",
+    "host_organization": "Algerie Telecom - Direction Operationnelle des Telecommunications d'Alger-Centre",
+    "supervisor": "Mme Benayache Samira",
+    "students": ["Kichou Sofiane", "Brahimi Mohamed Ouali"],
+    "promoter": "Mr Akak Abde El Malek",
+    "promotion": "2022/2025"
+  },
+  "abstract_fr": "This work focuses on the design and development of a web application dedicated to IT support management and IT asset monitoring. The main objective is to facilitate support ticket management, optimize the tracking of technical interventions, and improve IT equipment monitoring within an organization. In parallel, a mobile application was developed specifically for end users, allowing them to easily create support tickets and track the status of their requests in real time.",
+  "abstract_fr_keywords": "Assistance informatique, Parc informatique, API, UML, Laravel, Flutter",
+  "abstract_en": "This project involves the design and development of a web application dedicated to IT support management and IT asset monitoring. The objective is to facilitate ticket management, optimize intervention tracking, and improve equipment monitoring. A mobile application was also developed for end users. The project relies on web APIs and uses Laravel, Flutter, and Filament, following a UML approach.",
+  "abstract_en_keywords": "IT Support, IT Infrastructure, API, UML, Laravel, Flutter",
+  "acknowledgements": {
+    "promoter_thanks": "We thank our promoter Mr. Akak Abde El Malek for his warm welcome, valuable advice, and support throughout this work.",
+    "supervisor_thanks": "We also thank our academic supervisor Mme Benayache from the institute for her follow-up and availability.",
+    "colleagues_thanks": "We express our gratitude to our classmates for their solidarity and support throughout our training."
+  },
+  "chapter1": {
+    "title": "Generalities on the Web, Mobile and APIs",
+    "sections": [
+      {
+        "title": "Presentation of the Web",
+        "content": "The web is a system of hypertextual documents accessible via Internet. It evolved through several stages and relies on protocols like HTTP and HTTPS.",
+        "subtopics": [
+          "Internet, Intranet, Extranet",
+          "Web pages (static and dynamic)",
+          "Web sites"
+        ],
+        "figures": ["Web architecture", "Client/server architecture"]
+      },
+      {
+        "title": "Web Applications",
+        "content": "A web application is a program accessible via a browser without installation. Client/server architecture with several tiers.",
+        "figures": ["1-tier, 2-tier, 3-tier, n-tier architectures"]
+      },
+      {
+        "title": "APIs",
+        "content": "An API is a bridge allowing two software applications to communicate. REST APIs, HTTP methods (GET, POST, PUT, DELETE)."
+      },
+      {
+        "title": "Mobile Applications",
+        "content": "Mobile apps are programs for smartphones and tablets. Three categories: native, hybrid, and PWA."
+      }
+    ]
+  },
+  "chapter2": {
+    "title": "Preliminary Study",
+    "organization_presentation": "Algerie Telecom is a public economic company operating in the telecommunications market in Algeria. Created in 2000/2003, it offers voice and data services to residential and professional customers.",
+    "problem_statement": "How to centralize IT support request management and equipment monitoring? How to improve visibility and communication between users and technicians? How to integrate a mobile application?",
+    "objectives": [
+      "Develop a web application to centralize IT support ticketing and computer equipment monitoring",
+      "Develop a mobile application synchronized with the web app",
+      "Implement advanced security measures",
+      "Integrate with existing processes",
+      "Improve user experience"
+    ],
+    "existing_system_analysis": "Current methods: phone and email reports, direct visits to service chief, paper intervention forms, Excel spreadsheet equipment tracking.",
+    "existing_system_critique": [
+      "Unstructured reporting process",
+      "Work disturbance for the IT service chief",
+      "Ineffective documentation with paper forms",
+      "Excel tracking insufficient for real-time monitoring"
+    ]
+  },
+  "chapter3": {
+    "title": "Analysis and Design",
+    "actors": [
+      {
+        "name": "Administrator",
+        "description": "Manages employees, tickets, and computer equipment"
+      },
+      {
+        "name": "Technician",
+        "description": "Lists assigned tickets, updates status, adds comments"
+      },
+      {
+        "name": "User",
+        "description": "Creates tickets via web or mobile application and tracks their status"
+      }
+    ],
+    "use_cases": [
+      {
+        "name": "Authentication",
+        "actors": "Administrator, Technician",
+        "description": "The admin or technician enters login information to access the application.",
+        "preconditions": "Must have valid credentials.",
+        "postconditions": "Redirected to dashboard.",
+        "main_flow": [
+          "User requests authentication interface",
+          "System displays input form",
+          "User enters login information",
+          "System verifies provided information",
+          "If correct, system authenticates the user"
+        ],
+        "alternative_flow": "Multiple failed attempts temporarily block access (60s)."
+      },
+      {
+        "name": "Add an Employee",
+        "actors": "Administrator",
+        "description": "The admin adds a new employee (user or technician) to the system.",
+        "preconditions": "Admin must be authenticated.",
+        "postconditions": "New employee added with appropriate information.",
+        "main_flow": [
+          "Admin requests employee management interface",
+          "System displays existing employees",
+          "Admin requests add new employee",
+          "System displays input form",
+          "Admin fills information and submits",
+          "System saves data to database"
+        ],
+        "alternative_flow": "If role is 'technician', system triggers 'Create Account' use case."
+      },
+      {
+        "name": "Create an Account",
+        "actors": "Administrator",
+        "description": "A technician account is created with email and password.",
+        "preconditions": "Role of added employee is 'technician'.",
+        "postconditions": "Technician account is created.",
+        "main_flow": [
+          "System triggers account creation interface",
+          "System displays form",
+          "Admin enters information",
+          "System validates and creates account",
+          "System shows confirmation"
+        ],
+        "alternative_flow": "If email already exists, error message displayed."
+      },
+      {
+        "name": "Assign Tickets",
+        "actors": "Administrator",
+        "description": "Admin assigns new support tickets to technicians.",
+        "preconditions": "Admin authenticated and tickets exist.",
+        "postconditions": "Tickets assigned to technicians.",
+        "main_flow": [
+          "Admin accesses ticket list",
+          "System displays unassigned tickets",
+          "Admin selects technician for each ticket",
+          "System records assignment",
+          "Technicians see assigned tickets"
+        ],
+        "alternative_flow": "No unassigned tickets: empty state displayed."
+      },
+      {
+        "name": "Track Assigned Tickets",
+        "actors": "Technician",
+        "description": "Technician views list of tickets assigned to them.",
+        "preconditions": "Technician authenticated.",
+        "postconditions": "Technician sees their assigned tickets.",
+        "main_flow": [
+          "Technician requests assigned tickets",
+          "System displays ticket list",
+          "Technician updates status or adds comments"
+        ],
+        "alternative_flow": "No tickets assigned: empty state."
+      }
+    ],
+    "sequence_diagrams": ["Authentication", "Create Account", "Add Employee", "Assign Tickets", "Track Ticket", "View Equipment Details"],
+    "classes": [
+      {
+        "name": "User",
+        "attributes": "id, name, email, password, role",
+        "methods": "authenticate(), logout()"
+      },
+      {
+        "name": "Employee",
+        "attributes": "id, matricule, firstname, lastname, email, phone",
+        "methods": "create(), update(), delete()"
+      },
+      {
+        "name": "Ticket",
+        "attributes": "id, num_ticket, subject, description, status, priority",
+        "methods": "create(), update(), assign(), track()"
+      },
+      {
+        "name": "Equipment",
+        "attributes": "id, serial_number, type, state, ip_address",
+        "methods": "create(), update(), delete(), view()"
+      },
+      {
+        "name": "EquipmentType",
+        "attributes": "id, name (Computer, Printer)",
+        "methods": "add(), update()"
+      },
+      {
+        "name": "Site",
+        "attributes": "id, code, complex, block, floor",
+        "methods": "create(), update()"
+      }
+    ],
+    "database_tables": [
+      {
+        "name": "users",
+        "columns": [
+          {"name": "id", "type": "BIGINT", "nullable": "No", "description": "Primary key"},
+          {"name": "name", "type": "VARCHAR(255)", "nullable": "No", "description": "Full name"},
+          {"name": "email", "type": "VARCHAR(255)", "nullable": "No", "description": "Unique email address"},
+          {"name": "password", "type": "VARCHAR(255)", "nullable": "No", "description": "Hashed password"}
+        ]
+      },
+      {
+        "name": "employees",
+        "columns": [
+          {"name": "id", "type": "BIGINT", "nullable": "No", "description": "Primary key"},
+          {"name": "matricule", "type": "VARCHAR(50)", "nullable": "No", "description": "Employee ID"},
+          {"name": "firstname", "type": "VARCHAR(255)", "nullable": "No", "description": "First name"},
+          {"name": "lastname", "type": "VARCHAR(255)", "nullable": "No", "description": "Last name"},
+          {"name": "email", "type": "VARCHAR(255)", "nullable": "Yes", "description": "Email address"},
+          {"name": "phone", "type": "VARCHAR(50)", "nullable": "Yes", "description": "Phone number"},
+          {"name": "role", "type": "ENUM", "nullable": "No", "description": "admin, technician, user"}
+        ]
+      },
+      {
+        "name": "tickets",
+        "columns": [
+          {"name": "id", "type": "BIGINT", "nullable": "No", "description": "Primary key"},
+          {"name": "num_ticket", "type": "VARCHAR(50)", "nullable": "No", "description": "Unique ticket number"},
+          {"name": "subject", "type": "VARCHAR(255)", "nullable": "No", "description": "Ticket subject"},
+          {"name": "description", "type": "TEXT", "nullable": "No", "description": "Problem description"},
+          {"name": "status", "type": "ENUM", "nullable": "No", "description": "open, in_progress, closed"},
+          {"name": "priority", "type": "ENUM", "nullable": "No", "description": "low, medium, high"},
+          {"name": "user_id", "type": "BIGINT", "nullable": "No", "description": "FK to users"},
+          {"name": "technician_id", "type": "BIGINT", "nullable": "Yes", "description": "FK to employees"}
+        ]
+      }
+    ],
+    "deployment": "Web server (Laravel + MySQL) accessed by clients via browser; mobile app via REST API."
+  },
+  "chapter4": {
+    "title": "Implementation and Validation",
+    "languages_and_tools": [
+      {"name": "HTML5", "description": "Standard markup language for web pages"},
+      {"name": "CSS3", "description": "Cascading Style Sheets for presentation"},
+      {"name": "JavaScript", "description": "Client-side scripting for interactivity"},
+      {"name": "PHP", "description": "Server-side scripting language"},
+      {"name": "Laravel", "description": "Open-source PHP MVC framework"},
+      {"name": "Flutter", "description": "Cross-platform mobile development framework"},
+      {"name": "FilamentPHP", "description": "Admin panel builder for Laravel"},
+      {"name": "Postman", "description": "API development and testing tool"},
+      {"name": "PHPUnit", "description": "PHP unit testing framework"},
+      {"name": "VS Code", "description": "Code editor"},
+      {"name": "Draw.io", "description": "Diagram creation tool"}
+    ],
+    "interfaces": [
+      {"name": "Admin Dashboard", "description": "Main admin interface with statistics and charts"},
+      {"name": "Employee Management", "description": "List of employees with add/edit/delete operations"},
+      {"name": "Equipment Management", "description": "List of computers/printers with details"},
+      {"name": "Ticket Management", "description": "All support tickets with status tracking"},
+      {"name": "Technician Dashboard", "description": "Assigned tickets view for technicians"},
+      {"name": "User Ticket Creation", "description": "Web interface for creating support tickets"},
+      {"name": "Mobile App Home", "description": "Mobile interface for creating and tracking tickets"}
+    ],
+    "testing": {
+      "api_tests": "Postman: POST request to create ticket, GET request to retrieve ticket details",
+      "unit_tests": "PHPUnit: UserTicketControllerTest class with 5 tests (creation success, validation failure, valid/invalid tracking, ticket number generation)",
+      "performance_tests": "Laravel Telescope + custom artisan command simulating 100 POST requests (avg 483ms per request)",
+      "mobile_tests": "Flutter widget tests for ticket creation screen (5 tests) and ticket tracking screen (5 tests)",
+      "results": [
+        {"category": "API Tests (Postman)", "total": 2, "passed": 2},
+        {"category": "Unit Tests (PHPUnit)", "total": 5, "passed": 5},
+        {"category": "Performance Tests (Telescope)", "total": 100, "passed": 100},
+        {"category": "Mobile Tests (Flutter)", "total": 10, "passed": 10}
+      ]
+    }
+  },
+  "conclusion": {
+    "summary": "This project demonstrated the importance of a strong centralized system for IT support management and equipment monitoring. Using Laravel, Flutter, and Filament, the application facilitates ticket creation and tracking, equipment management, and technician coordination. All tests validated the reliability of the system.",
+    "limitations": "The functional scope is currently limited to basic needs. The system is not yet integrated with SNMP protocol or other existing Algérie Telecom platforms.",
+    "perspectives": [
+      "Integrate web app features into the mobile app (equipment management, reports)",
+      "Add SNMP protocol for real-time equipment supervision and proactive management"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+% inertia-bridge.tex — Inertia.js Bridge: Laravel to React data flow
+\begin{tikzpicture}[
+  >=Stealth, node distance=1.2cm and 2.2cm,
+  box/.style={draw, rounded corners=3pt, minimum width=4.0cm, minimum height=1.1cm, align=center, font=\small}
+]
+\node[box] (lar) {Laravel 13 Server\\Routes + Controllers};
+\node[box, right=2.2cm of lar] (kernel) {Inertia Kernel\\serialized page data (JSON)};
+\node[box, right=2.2cm of kernel] (react) {React 19\\Component Tree};
+\draw[->, very thick] (lar) -- node[above, font=\scriptsize]{initial visit $\rightarrow$ HTML} (kernel);
+\draw[->, very thick] (kernel) -- node[above, font=\scriptsize]{component + props} (react);
+\draw[->, very thick] (react.south) -- ++(0,-1.3) -| node[left, font=\scriptsize, pos=0.2]{Inertia HTTP (XHR)} (lar.south);
+\draw[->, very thick] (lar) -- node[below, font=\scriptsize, pos=0.3]{auth, CSRF, validation} (kernel);
+\end{tikzpicture}

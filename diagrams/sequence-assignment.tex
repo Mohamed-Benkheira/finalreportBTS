@@ -1,0 +1,25 @@
+% sequence-assignment.tex — Fig 3.15 : Sequence — Assignment lifecycle
+\begin{tikzpicture}[>=Stealth, font=\scriptsize]
+\def\H{6.8}
+\node (m) at (0.5,0) {Manager};
+\node (b) at (3.5,0) {Filament UI};
+\node (s) at (7.0,0) {AssignmentService};
+\node (d) at (10.5,0) {Database};
+\draw[dashed] (m.south) -- (0.5,-\H);
+\draw[dashed] (b.south) -- (3.5,-\H);
+\draw[dashed] (s.south) -- (7.0,-\H);
+\draw[dashed] (d.south) -- (10.5,-\H);
+\draw[fill=black!12] (3.35,-0.7) rectangle (3.65,-6.1);
+\draw[fill=black!12] (6.85,-1.3) rectangle (7.15,-5.5);
+\draw[fill=black!12] (10.35,-1.9) rectangle (10.65,-4.9);
+\draw[-{Stealth}] (0.5,-0.8) -- (3.5,-0.8) node[midway,above]{create assignment};
+\draw[-{Stealth}] (3.5,-1.4) -- (7.0,-1.4) node[midway,above]{create(members, teams)};
+\draw[-{Stealth}] (7.0,-2.0) -- (10.5,-2.0) node[midway,above]{check active assignment};
+\draw[-{Stealth}] (10.5,-2.6) -- (7.0,-2.6) node[midway,above]{single-active OK};
+\draw[-{Stealth}] (7.0,-3.2) -- (10.5,-3.2) node[midway,above]{insert Pending};
+\draw[-{Stealth}] (3.5,-3.8) -- (7.0,-3.8) node[midway,above]{approve()};
+\draw[-{Stealth}] (7.0,-4.4) -- (10.5,-4.4) node[midway,above]{set Approved + history};
+\draw[-{Stealth}] (7.0,-5.0) -- (3.5,-5.0) node[midway,above]{audit entry};
+\draw[-{Stealth}] (3.5,-5.6) -- (0.5,-5.6) node[midway,above]{approved};
+\draw[-{Stealth}] (7.0,-6.2) -- (10.5,-6.2) node[midway,above]{Complete: set left\_at};
+\end{tikzpicture}

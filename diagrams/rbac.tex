@@ -1,0 +1,17 @@
+% rbac.tex — Fig 1.2 : Role-based access control model
+\begin{tikzpicture}[
+  >=Stealth, node distance=1.1cm and 1.6cm,
+  user/.style={draw, rounded corners=3pt, minimum width=3cm, minimum height=1cm, align=center, font=\small},
+  role/.style={draw, rounded corners=3pt, minimum width=2.8cm, minimum height=0.9cm, align=center, font=\small},
+  perm/.style={draw, rounded corners=3pt, minimum width=3.6cm, minimum height=0.75cm, align=center, font=\small}
+]
+\node[user] (u) {User};
+\node[role, right=2.6cm of u] (r) {Role (6 roles)};
+\node[perm, right=2.6cm of r] (p) {Permission (56 perms)};
+\draw[-{Stealth}, thick] (u) -- (r) node[midway, above, font=\scriptsize]{assignRole()};
+\draw[-{Stealth}, thick] (r) -- (p) node[midway, above, font=\scriptsize]{hasMany};
+\node[role, below=0.85cm of r] (roles) {\scriptsize Super Admin / Admin / HR\\\scriptsize Resource Manager / PM / Employee};
+\node[perm, below=0.85cm of p] (perms) {\scriptsize org / employees / projects / assignments\\\scriptsize profile requests / recommendations / users / roles};
+\draw[{Stealth}-{Stealth}, thin] (r.south) -- (roles.north);
+\draw[{Stealth}-{Stealth}, thin] (p.south) -- (perms.north);
+\end{tikzpicture}

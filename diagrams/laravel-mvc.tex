@@ -1,0 +1,19 @@
+% laravel-mvc.tex — Laravel MVC request lifecycle
+\begin{tikzpicture}[
+  >=Stealth, node distance=1.3cm and 2.4cm,
+  box/.style={draw, rounded corners=3pt, minimum width=3.8cm, minimum height=1.0cm, align=center, font=\small},
+  db/.style={draw, cylinder, shape aspect=0.5, align=center, font=\small, minimum width=2.6cm, minimum height=1.7cm, inner sep=4pt}
+]
+\node[box] (browser) {Browser\\HTTP Request};
+\node[box, right=of browser] (routes) {Routes\\web.php / api.php};
+\node[box, right=of routes] (controller) {Controller\\business logic};
+\node[box, below=of controller] (model) {Eloquent Model\\ORM layer};
+\node[db, below=of model] (db) {Database\\MySQL};
+\node[box, above right=0.6cm and -1.4cm of controller] (view) {View Layer\\Blade / Inertia JSON};
+\draw[->, very thick] (browser) -- (routes);
+\draw[->, very thick] (routes) -- node[above, font=\scriptsize]{dispatch} (controller);
+\draw[<->, very thick] (controller) -- (model);
+\draw[<->, very thick] (model) -- node[right, font=\scriptsize]{SQL} (db);
+\draw[->, very thick] (controller) -- (view);
+\draw[->, very thick] ([yshift=0.35cm]view.west) -| node[above, font=\scriptsize, pos=0.25]{HTTP response} (browser.north);
+\end{tikzpicture}

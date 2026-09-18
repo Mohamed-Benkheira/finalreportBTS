@@ -1,0 +1,28 @@
+% existing-workflow.tex — Fig 2.2 : Current manual resource assignment process
+\begin{tikzpicture}[
+  >=Stealth, node distance=1.1cm and 1.2cm,
+  act/.style={draw, rounded corners=3pt, minimum width=4cm, minimum height=0.85cm, align=center, font=\small},
+  dec/.style={draw, diamond, aspect=2.2, inner sep=1pt, align=center, font=\scriptsize},
+  start/.style={circle, fill=black, inner sep=0pt, minimum size=3mm},
+  endnode/.style={circle, draw, thick, inner sep=0pt, minimum size=3mm}
+]
+\node[start] (s) {};
+\node[act, below=0.9cm of s] (a1) {PM asks for staff by email};
+\node[act, below=0.9cm of a1] (a2) {HR searches Excel spreadsheets};
+\node[act, below=0.9cm of a2] (a3) {Weekly meeting estimates workload};
+\node[act, below=0.9cm of a3] (a4) {Manual assignment decision};
+\node[dec, below=0.9cm of a4] (d) {Recorded?};
+\node[act, below left=1.2cm and 0.4cm of d] (a5) {Nothing recorded};
+\node[act, below right=1.2cm and 0.4cm of d] (a6) {Email confirmation};
+\node[endnode, below=1.0cm of a5] (e1) {};
+\node[endnode, below=1.0cm of a6] (e2) {};
+\draw[-{Stealth}] (s) -- (a1);
+\draw[-{Stealth}] (a1) -- (a2);
+\draw[-{Stealth}] (a2) -- (a3);
+\draw[-{Stealth}] (a3) -- (a4);
+\draw[-{Stealth}] (a4) -- (d);
+\draw[-{Stealth}] (d) -- node[above, font=\scriptsize]{No} (a5);
+\draw[-{Stealth}] (d) -- node[above, font=\scriptsize]{Yes} (a6);
+\draw[-{Stealth}] (a5) -- (e1);
+\draw[-{Stealth}] (a6) -- (e2);
+\end{tikzpicture}

@@ -1,0 +1,14 @@
+% web-architecture.tex — Fig 1.1 : Client–server web architecture
+\begin{tikzpicture}[
+  >=Stealth, node distance=1.2cm and 1.8cm,
+  box/.style={draw, rounded corners=3pt, minimum width=3.4cm, minimum height=1.2cm, align=center, font=\small},
+  db/.style={draw, cylinder, shape aspect=0.5, align=center, font=\small, minimum width=2.2cm, minimum height=1.7cm, inner sep=4pt}
+]
+\node[box] (client) {Browser\\React SPA \\+ Filament 5};
+\node[box, right=1.8cm of client] (app) {Web Server\\Nginx + PHP-FPM\\Laravel 13 Monolith};
+\node[db, right=1.8cm of app] (db) {Database\\PostgreSQL};
+\draw[<->, very thick] (client) -- node[above, font=\scriptsize]{HTTP/HTTPS} (app);
+\draw[<->, very thick] (app) -- node[above, font=\scriptsize]{SQL} (db);
+\node[box, below=0.9cm of app] (vite) {Vite 8 + Tailwind 4\\static assets};
+\draw[<->, thick] (client.south) -- node[right, font=\scriptsize]{assets (HMR in dev)} (vite.north);
+\end{tikzpicture}

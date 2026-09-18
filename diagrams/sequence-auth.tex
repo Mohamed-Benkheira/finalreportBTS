@@ -1,0 +1,24 @@
+% sequence-auth.tex — Fig 3.11 : Sequence — Authentication with 2FA/passkeys
+\begin{tikzpicture}[>=Stealth, font=\scriptsize]
+\def\H{6.4}
+\node (u) at (0.6,0) {User};
+\node (b) at (3.6,0) {Login Page};
+\node (f) at (7.0,0) {Fortify};
+\node (d) at (10.4,0) {Database};
+\draw[dashed] (u.south) -- (0.6,-\H);
+\draw[dashed] (b.south) -- (3.6,-\H);
+\draw[dashed] (f.south) -- (7.0,-\H);
+\draw[dashed] (d.south) -- (10.4,-\H);
+\draw[fill=black!12] (3.45,-0.7) rectangle (3.75,-5.7);
+\draw[fill=black!12] (6.85,-1.3) rectangle (7.15,-5.1);
+\draw[fill=black!12] (10.25,-1.9) rectangle (10.55,-4.3);
+\draw[-{Stealth}] (0.6,-0.8) -- (3.6,-0.8) node[midway,above]{email + password};
+\draw[-{Stealth}] (3.6,-1.4) -- (7.0,-1.4) node[midway,above]{validate credentials};
+\draw[-{Stealth}] (7.0,-2.0) -- (10.4,-2.0) node[midway,above]{select user + 2FA flag};
+\draw[-{Stealth}] (10.4,-2.6) -- (7.0,-2.6) node[midway,above]{result};
+\draw[-{Stealth}] (0.6,-3.2) -- (3.6,-3.2) node[midway,above]{if 2FA: TOTP / recovery};
+\draw[-{Stealth}] (3.6,-3.8) -- (7.0,-3.8) node[midway,above]{verify code};
+\draw[-{Stealth}] (7.0,-4.4) -- (10.4,-4.4) node[midway,above]{create session};
+\draw[-{Stealth}] (7.0,-5.0) -- (3.6,-5.0) node[midway,above]{authenticated};
+\draw[-{Stealth}] (3.6,-5.6) -- (0.6,-5.6) node[midway,above]{redirect by role};
+\end{tikzpicture}

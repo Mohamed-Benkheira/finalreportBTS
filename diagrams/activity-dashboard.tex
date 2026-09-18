@@ -1,0 +1,27 @@
+% activity-dashboard.tex — Fig 3.7 : Activity diagram — View dashboard analytics
+\begin{tikzpicture}[
+  >=Stealth, node distance=0.9cm and 1.6cm,
+  act/.style={draw, rounded corners=3pt, minimum width=4.8cm, minimum height=0.75cm, align=center, font=\small},
+  dec/.style={draw, diamond, aspect=2.1, inner sep=1pt, align=center, font=\scriptsize},
+  start/.style={circle, fill=black, inner sep=0pt, minimum size=3mm},
+  endnode/.style={circle, draw, thick, inner sep=0pt, minimum size=3mm}
+]
+\node[start] (s) {};
+\node[act, below=0.8cm of s] (a1) {Authenticate and open dashboard};
+\node[act, below=0.8cm of a1] (a2) {Load stat cards};
+\node[act, below=0.8cm of a2] (a3) {Load 3 charts};
+\node[act, below=0.8cm of a3] (a4) {Load alert tables};
+\node[dec, below=0.8cm of a4] (d1) {Over-allocation?};
+\node[act, below left=1.1cm and 0.6cm of d1] (a5) {Show alert};
+\node[act, below=0.85cm of d1] (a6) {Show audit activity feed};
+\node[endnode, below=0.8cm of a6] (e) {};
+\draw[-{Stealth}] (s) -- (a1);
+\draw[-{Stealth}] (a1) -- (a2);
+\draw[-{Stealth}] (a2) -- (a3);
+\draw[-{Stealth}] (a3) -- (a4);
+\draw[-{Stealth}] (a4) -- (d1);
+\draw[-{Stealth}] (d1) -- node[above, font=\scriptsize]{Yes} (a5);
+\draw[-{Stealth}] (a5.south) -- ++(0,-0.5) -| (a6.west);
+\draw[-{Stealth}] (d1) -- node[left, font=\scriptsize]{No} (a6);
+\draw[-{Stealth}] (a6) -- (e);
+\end{tikzpicture}

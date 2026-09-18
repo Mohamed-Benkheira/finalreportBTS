@@ -1,0 +1,26 @@
+% org-chart.tex — Fig 2.1 : Organization structure of Djezzy (case study areas)
+\begin{tikzpicture}[
+  >=Stealth,
+  lvl1/.style={draw, rounded corners=3pt, minimum width=4cm, minimum height=0.8cm, align=center, font=\small\bfseries},
+  lvl2/.style={draw, rounded corners=3pt, minimum width=4.4cm, minimum height=0.8cm, align=center, font=\small},
+  lvl3/.style={draw, rounded corners=3pt, minimum width=3.6cm, minimum height=0.7cm, align=center, font=\footnotesize, fill=black!4},
+  node distance=1.1cm and 0.9cm
+]
+\node[lvl1] (ceo) {Djezzy Executive \\ (CEO / General direction)};
+\node[lvl2, below left=1.5cm and 1.2cm of ceo] (bu1) {Business Unit: Technology};
+\node[lvl2, below=1.5cm of ceo] (bu2) {Business Unit: Human Resources};
+\node[lvl2, below right=1.5cm and 1.2cm of ceo] (bu3) {Business Unit: Finance};
+\node[lvl3, below=0.9cm of bu1] (d11) {Dept. IT Infrastructure};
+\node[lvl3, below=0.55cm of d11] (d12) {Dept. Software Development};
+\node[lvl3, below=0.9cm of bu2] (d21) {Dept. HR Operations};
+\node[lvl3, below=0.55cm of d21] (d22) {Dept. Training and Skills};
+\node[lvl3, below=0.9cm of bu3] (d31) {Dept. Accounting};
+\draw[-{Stealth}] (ceo) -- (bu1);
+\draw[-{Stealth}] (ceo) -- (bu2);
+\draw[-{Stealth}] (ceo) -- (bu3);
+\draw[-{Stealth}] (bu1) -- (d11);
+\draw[-{Stealth}] (d11) -- (d12);
+\draw[-{Stealth}] (bu2) -- (d21);
+\draw[-{Stealth}] (d21) -- (d22);
+\draw[-{Stealth}] (bu3) -- (d31);
+\end{tikzpicture}
