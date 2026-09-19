@@ -1,14 +1,99 @@
 % web-architecture.tex — Fig 1.1 : Client–server web architecture
 \begin{tikzpicture}[
-  >=Stealth, node distance=1.2cm and 1.8cm,
-  box/.style={draw, rounded corners=3pt, minimum width=3.4cm, minimum height=1.2cm, align=center, font=\small},
-  db/.style={draw, cylinder, shape aspect=0.5, align=center, font=\small, minimum width=2.2cm, minimum height=1.7cm, inner sep=4pt}
+  >=Stealth,
+  font=\sffamily,
+  tierbox/.style={
+    draw=black!75,
+    fill=white,
+    line width=0.8pt,
+    rounded corners=3pt,
+    minimum width=3.6cm,
+    minimum height=1.75cm,
+    align=center,
+    font=\fontsize{7.5pt}{9.2pt}\selectfont
+  },
+  toolnode/.style={
+    draw=black!60,
+    dashed,
+    fill=black!2,
+    rounded corners=3pt,
+    line width=0.7pt,
+    minimum width=4.2cm,
+    minimum height=1.35cm,
+    align=center,
+    font=\fontsize{7pt}{8.5pt}\selectfont
+  },
+  headerlabel/.style={
+    font=\fontsize{8pt}{9.5pt}\selectfont\bfseries\color{black!80}
+  }
 ]
-\node[box] (client) {Browser\\React SPA \\+ Filament 5};
-\node[box, right=1.8cm of client] (app) {Web Server\\Nginx + PHP-FPM\\Laravel 13 Monolith};
-\node[db, right=1.8cm of app] (db) {Database\\PostgreSQL};
-\draw[<->, very thick] (client) -- node[above, font=\scriptsize]{HTTP/HTTPS} (app);
-\draw[<->, very thick] (app) -- node[above, font=\scriptsize]{SQL} (db);
-\node[box, below=0.9cm of app] (vite) {Vite 8 + Tailwind 4\\static assets};
-\draw[<->, thick] (client.south) -- node[right, font=\scriptsize]{assets (HMR in dev)} (vite.north);
+
+  % ============================================================
+  % TIER HEADER LABELS
+  % ============================================================
+  \node[headerlabel] at (0.0, 1.4) {Client Tier (Frontend)};
+  \node[headerlabel] at (5.8, 1.4) {Application Tier (Backend)};
+  \node[headerlabel] at (11.6, 1.4) {Data Tier (Persistence)};
+
+  % ============================================================
+  % MAIN NODES
+  % ============================================================
+
+  % 1. Client Browser
+  \node[tierbox] (client) at (0.0, 0.0) {
+    {\scriptsize\color{black!60}$\langle\langle$client$\rangle\rangle$}\\[-1pt]
+    \textbf{Client Workstation} \\
+    \scriptsize Web Browser \\
+    \tiny React 19 SPA (Inertia.js) \\
+    \tiny Filament 5 Admin UI
+  };
+
+  % 2. Application / Web Server
+  \node[tierbox] (server) at (5.8, 0.0) {
+    {\scriptsize\color{black!60}$\langle\langle$server$\rangle\rangle$}\\[-1pt]
+    \textbf{Application Server} \\
+    \scriptsize Nginx + PHP-FPM 8.3 \\
+    \tiny Laravel 13 Monolith \\
+    \tiny Business Logic \& Routing
+  };
+
+  % 3. Database Server
+  \node[tierbox] (db) at (11.6, 0.0) {
+    {\scriptsize\color{black!60}$\langle\langle$database$\rangle\rangle$}\\[-1pt]
+    \textbf{Database Server} \\
+    \scriptsize PostgreSQL 16 \\
+    \tiny 44 Relational Tables \\
+    \tiny Constraints \& Foreign Keys
+  };
+
+  % 4. Asset Build Tool (Vite)
+  \node[toolnode] (vite) at (2.9, -2.45) {
+    {\scriptsize\color{black!60}$\langle\langle$buildTool$\rangle\rangle$}\\[-1pt]
+    \textbf{Asset Pipeline \& Bundler} \\
+    \scriptsize Vite 8 + Tailwind CSS 4 \\
+    \tiny Fast Compilation \& Dev HMR
+  };
+
+  % ============================================================
+  % CONNECTORS & DATA FLOW
+  % ============================================================
+
+  % Client <-> Server (Bidirectional HTTPS Communication)
+  \draw[<->, line width=0.8pt] (client) -- 
+    node[above=2pt, font=\scriptsize\bfseries]{HTTPS / TLS (port 443)} 
+    node[below=2pt, font=\tiny\color{black!70}]{REST API, Inertia.js, JSON payload} (server);
+
+  % Server <-> Database (Bidirectional Database Communication)
+  \draw[<->, line width=0.8pt] (server) -- 
+    node[above=2pt, font=\scriptsize\bfseries]{SQL Queries (port 5432)} 
+    node[below=2pt, font=\tiny\color{black!70}]{PDO / Eloquent ORM, Result Sets} (db);
+
+  % Vite <-> Client (Dev Assets & HMR)
+  \draw[<->, line width=0.7pt] ([xshift=0.6cm]client.south) 
+    |- node[pos=0.4, left=2pt, font=\tiny]{HMR / dev assets} (vite.west);
+
+  % Vite -> Server (Production Build Output)
+  \draw[->, line width=0.7pt] (vite.east) 
+    -| node[pos=0.6, right=2pt, font=\tiny]{compiled assets (public/build/)} ([xshift=-0.6cm]server.south);
+
 \end{tikzpicture}

@@ -918,73 +918,43 @@ The class diagram models the static structure of the Djezzy platform, identifyin
 \subsection{Class Descriptions}
 
 \begin{classtable}{Class: User}
-Attributes & id, name, email, password, email\_verified\_at, two\_factor\_secret, two\_factor\_recovery\_codes, remember\_token, created\_at, updated\_at \\
-\hline
-Methods & assignRole(), hasRole(), can(), delete() \\
-\hline
+id, name, email, password, email\_verified\_at, two\_factor\_secret, two\_factor\_recovery\_codes, remember\_token, created\_at, updated\_at & assignRole(), hasRole(), can(), delete() \\
 \end{classtable}
 
 \begin{classtable}{Class: Employee}
-Attributes & id, user\_id, matricule, first\_name, last\_name, email, phone, hire\_date, employment\_status, employment\_type, department\_id, position\_id, location\_id, team\_id, manager\_id, created\_at, updated\_at, deleted\_at \\
-\hline
-Methods & skills(), certifications(), languages(), availabilities(), workloads(), assignments(), fullName() \\
-\hline
+id, user\_id, matricule, first\_name, last\_name, email, phone, hire\_date, employment\_status, employment\_type, department\_id, position\_id, location\_id, team\_id, manager\_id, created\_at, updated\_at, deleted\_at & skills(), certifications(), languages(), availabilities(), workloads(), assignments(), fullName() \\
 \end{classtable}
 
 \begin{classtable}{Class: Department}
-Attributes & id, business\_unit\_id, name, code, description, head\_id, created\_at, updated\_at, deleted\_at \\
-\hline
-Methods & businessUnit(), employees(), teams() \\
-\hline
+id, business\_unit\_id, name, code, description, head\_id, created\_at, updated\_at, deleted\_at & businessUnit(), employees(), teams() \\
 \end{classtable}
 
 \begin{classtable}{Class: Project}
-Attributes & id, name, code, description, project\_category\_id, assignment\_mode, priority, status, start\_date, target\_end\_date, actual\_end\_date, estimated\_effort\_hours, confidentiality\_level, requested\_by, project\_manager\_id, created\_at, updated\_at, deleted\_at \\
-\hline
-Methods & assignments(), requirements(), category(), evaluations() \\
-\hline
+id, name, code, description, project\_category\_id, assignment\_mode, priority, status, start\_date, target\_end\_date, actual\_end\_date, estimated\_effort\_hours, confidentiality\_level, requested\_by, project\_manager\_id, created\_at, updated\_at, deleted\_at & assignments(), requirements(), category(), evaluations() \\
 \end{classtable}
 
 \begin{classtable}{Class: Assignment}
-Attributes & id, project\_id, assigned\_by, approved\_by, assignment\_type, status, assigned\_at, approved\_at, start\_date, end\_date, notes, created\_at, updated\_at \\
-\hline
-Methods & project(), members(), teams(), statusHistory() \\
-\hline
+id, project\_id, assigned\_by, approved\_by, assignment\_type, status, assigned\_at, approved\_at, start\_date, end\_date, notes, created\_at, updated\_at & project(), members(), teams(), statusHistory() \\
 \end{classtable}
 
 \begin{classtable}{Class: Skill}
-Attributes & id, skill\_category\_id, name, code, description, created\_at, updated\_at, deleted\_at \\
-\hline
-Methods & category(), employees(), projects() \\
-\hline
+id, skill\_category\_id, name, code, description, created\_at, updated\_at, deleted\_at & category(), employees(), projects() \\
 \end{classtable}
 
 \begin{classtable}{Class: Certification}
-Attributes & id, name, code, issuer, validity\_months, created\_at, updated\_at, deleted\_at \\
-\hline
-Methods & employees() \\
-\hline
+id, name, code, issuer, validity\_months, created\_at, updated\_at, deleted\_at & employees() \\
 \end{classtable}
 
 \begin{classtable}{Class: Language}
-Attributes & id, name, code, created\_at, updated\_at, deleted\_at \\
-\hline
-Methods & employees() \\
-\hline
+id, name, code, created\_at, updated\_at, deleted\_at & employees() \\
 \end{classtable}
 
 \begin{classtable}{Class: AuditLog}
-Attributes & id, user\_id, action, auditable\_type, auditable\_id, old\_values, new\_values, ip\_address, user\_agent, created\_at \\
-\hline
-Methods & user(), auditable() \\
-\hline
+id, user\_id, action, auditable\_type, auditable\_id, old\_values, new\_values, ip\_address, user\_agent, created\_at & user(), auditable() \\
 \end{classtable}
 
 \begin{classtable}{Class: AssignmentStatusHistory}
-Attributes & id, assignment\_id, old\_status, new\_status, changed\_by, reason, created\_at \\
-\hline
-Methods & assignment(), changedByUser() \\
-\hline
+id, assignment\_id, old\_status, new\_status, changed\_by, reason, created\_at & assignment(), changedByUser() \\
 \end{classtable}
 
 \subsection{Passage to the Relational Model}

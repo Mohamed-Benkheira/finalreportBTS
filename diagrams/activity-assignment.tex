@@ -1,33 +1,40 @@
 % activity-assignment.tex — Fig 3.6 : Activity diagram — Assignment status workflow
 \begin{tikzpicture}[
-  >=Stealth, node distance=0.9cm and 1.6cm,
-  act/.style={draw, rounded corners=3pt, minimum width=4.8cm, minimum height=0.8cm, align=center, font=\small},
-  dec/.style={draw, diamond, aspect=2.1, inner sep=1pt, align=center, font=\scriptsize},
+  >=Stealth,
+  node distance=0.48cm and 1.4cm,
+  act/.style={draw, rounded corners=3pt, minimum width=4.8cm, minimum height=0.72cm, align=center, font=\small},
+  err/.style={draw, rounded corners=3pt, minimum width=3.2cm, minimum height=0.72cm, align=center, font=\small},
+  dec/.style={draw, diamond, aspect=2.1, inner sep=2pt, align=center, font=\scriptsize},
   start/.style={circle, fill=black, inner sep=0pt, minimum size=3mm},
   endnode/.style={circle, draw, thick, inner sep=0pt, minimum size=3mm}
 ]
-\node[start] (s) {};
-\node[act, below=0.8cm of s] (a1) {Create assignment for project};
-\node[act, below=0.8cm of a1] (a2) {Add members/teams + allocations};
-\node[dec, below=0.8cm of a2] (d0) {Single active\\assignment?};
-\node[act, below left=1.2cm and 0.6cm of d0] (a0) {Block (violation)};
-\node[act, below=0.85cm of d0] (a3) {Save as Pending};
-\node[dec, below=0.8cm of a3] (d1) {Approve?};
-\node[act, below left=1.1cm and 0.6cm of d1] (a4) {Rejected / Cancelled};
-\node[act, below=0.85cm of d1] (a5) {Approved (rec. approver)};
-\node[act, below=0.8cm of a5] (a6) {Activate};
-\node[act, below=0.8cm of a6] (a7) {Complete (set left\_at)};
-\node[endnode, below=0.8cm of a7] (e) {};
-\draw[-{Stealth}] (s) -- (a1);
-\draw[-{Stealth}] (a1) -- (a2);
-\draw[-{Stealth}] (a2) -- (d0);
-\draw[-{Stealth}] (d0) -- node[above, font=\scriptsize]{No} (a0);
-\draw[-{Stealth}] (a0) -- ++(0,-0.5) -| (a1.west);
-\draw[-{Stealth}] (d0) -- node[left, font=\scriptsize]{Yes} (a3);
-\draw[-{Stealth}] (a3) -- (d1);
-\draw[-{Stealth}] (d1) -- node[above, font=\scriptsize]{No} (a4);
-\draw[-{Stealth}] (d1) -- node[left, font=\scriptsize]{Yes} (a5);
-\draw[-{Stealth}] (a5) -- (a6);
-\draw[-{Stealth}] (a6) -- (a7);
-\draw[-{Stealth}] (a7) -- (e);
+  % --- Central Flow Nodes ---
+  \node[start] (s) {};
+  \node[act, below=0.48cm of s] (a1) {Create assignment for project};
+  \node[act, below=0.48cm of a1] (a2) {Add members/teams + allocations};
+  \node[dec, below=0.48cm of a2] (d0) {Single active\\assignment?};
+  \node[act, below=0.55cm of d0] (a3) {Save as Pending};
+  \node[dec, below=0.48cm of a3] (d1) {Approve?};
+  \node[act, below=0.55cm of d1] (a5) {Approved (rec. approver)};
+  \node[act, below=0.48cm of a5] (a6) {Activate};
+  \node[act, below=0.48cm of a6] (a7) {Complete (set left\_at)};
+  \node[endnode, below=0.48cm of a7] (e) {};
+
+  % --- Rejection / Blocking Nodes (Left Column) ---
+  \node[err, left=1.4cm of d0] (a0) {Block (violation)};
+  \node[err, left=1.4cm of d1] (a4) {Rejected / Cancelled};
+
+  % --- Main Connectors ---
+  \draw[-{Stealth}] (s) -- (a1);
+  \draw[-{Stealth}] (a1) -- (a2);
+  \draw[-{Stealth}] (a2) -- (d0);
+  \draw[-{Stealth}] (d0) -- node[above, font=\scriptsize] {No} (a0);
+  \draw[-{Stealth}] (a0.west) -- ++(-0.6,0) |- (a1.west);
+  \draw[-{Stealth}] (d0) -- node[right, font=\scriptsize] {Yes} (a3);
+  \draw[-{Stealth}] (a3) -- (d1);
+  \draw[-{Stealth}] (d1) -- node[above, font=\scriptsize] {No} (a4);
+  \draw[-{Stealth}] (d1) -- node[right, font=\scriptsize] {Yes} (a5);
+  \draw[-{Stealth}] (a5) -- (a6);
+  \draw[-{Stealth}] (a6) -- (a7);
+  \draw[-{Stealth}] (a7) -- (e);
 \end{tikzpicture}

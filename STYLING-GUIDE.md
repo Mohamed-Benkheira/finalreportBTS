@@ -405,10 +405,8 @@ Use `\classtable` for a clean description table (header row colored,
 body rows plain white, normal-size font). Pattern:
 
 ```latex
-\begin{classtable}{Description of application classes}
-  Class       & Attributes                    & Methods            \\
-  User        & id, name, email               & login(), logout()  \\
-  Training    & id, title, duration           & create(), update() \\
+\begin{classtable}{Class: User}
+  id, name, email, password & assignRole(), hasRole(), can() \\
 \end{classtable}
 ```
 

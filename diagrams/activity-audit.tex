@@ -1,29 +1,35 @@
 % activity-audit.tex — Fig 3.8 : Activity diagram — Audit trail capture
 \begin{tikzpicture}[
-  >=Stealth, node distance=0.9cm and 1.6cm,
-  act/.style={draw, rounded corners=3pt, minimum width=4.6cm, minimum height=0.8cm, align=center, font=\small},
-  dec/.style={draw, diamond, aspect=2.2, inner sep=1pt, align=center, font=\scriptsize},
-  pr/.style={draw, rounded corners=3pt, minimum width=4.6cm, minimum height=0.8cm, align=center, font=\small, dashed},
+  >=Stealth,
+  node distance=0.52cm and 1.4cm,
+  act/.style={draw, rounded corners=3pt, minimum width=4.8cm, minimum height=0.72cm, align=center, font=\small},
+  pr/.style={draw, rounded corners=3pt, minimum width=3.4cm, minimum height=0.72cm, align=center, font=\small, dashed},
+  dec/.style={draw, diamond, aspect=2.1, inner sep=2pt, align=center, font=\scriptsize},
   start/.style={circle, fill=black, inner sep=0pt, minimum size=3mm},
   endnode/.style={circle, draw, thick, inner sep=0pt, minimum size=3mm}
 ]
-\node[start] (s) {};
-\node[act, below=0.8cm of s] (a1) {Action performed on entity};
-\node[act, below=0.8cm of a1] (a2) {Event reaches observer / AuditService};
-\node[dec, below=0.8cm of a2] (d1) {Trigger tracked?};
-\node[pr, below left=1.0cm and 0.6cm of d1] (a3) {Notification only, no log};
-\node[act, below=0.8cm of d1] (a4) {Serialize old / new values};
-\node[act, below=0.8cm of a4] (a5) {Store audit\_logs row};
-\node[act, below=0.8cm of a5] (a6) {Link to actor + IP + user-agent};
-\node[act, below=0.8cm of a6] (a7) {Refresh audit dashboard feed};
-\node[endnode, below=0.8cm of a7] (e) {};
-\draw[-{Stealth}] (s) -- (a1);
-\draw[-{Stealth}] (a1) -- (a2);
-\draw[-{Stealth}] (a2) -- (d1);
-\draw[-{Stealth}] (d1) -- node[right, font=\scriptsize]{No} (a3);
-\draw[-{Stealth}] (d1) -- node[left, font=\scriptsize]{Yes} (a4);
-\draw[-{Stealth}] (a4) -- (a5);
-\draw[-{Stealth}] (a5) -- (a6);
-\draw[-{Stealth}] (a6) -- (a7);
-\draw[-{Stealth}] (a7) -- (e);
+  % --- Central Flow Nodes ---
+  \node[start] (s) {};
+  \node[act, below=0.5cm of s] (a1) {Action performed on entity};
+  \node[act, below=0.5cm of a1] (a2) {Event reaches observer / AuditService};
+  \node[dec, below=0.5cm of a2] (d1) {Trigger tracked?};
+  \node[act, below=0.65cm of d1] (a4) {Serialize old / new values};
+  \node[act, below=0.5cm of a4] (a5) {Store audit\_logs row};
+  \node[act, below=0.5cm of a5] (a6) {Link to actor + IP + user-agent};
+  \node[act, below=0.5cm of a6] (a7) {Refresh audit dashboard feed};
+  \node[endnode, below=0.5cm of a7] (e) {};
+
+  % --- Non-tracked Branch (Left) ---
+  \node[pr, left=1.4cm of d1] (a3) {Notification only, no log};
+
+  % --- Connectors ---
+  \draw[-{Stealth}] (s) -- (a1);
+  \draw[-{Stealth}] (a1) -- (a2);
+  \draw[-{Stealth}] (a2) -- (d1);
+  \draw[-{Stealth}] (d1) -- node[above, font=\scriptsize] {No} (a3);
+  \draw[-{Stealth}] (d1) -- node[right, font=\scriptsize] {Yes} (a4);
+  \draw[-{Stealth}] (a4) -- (a5);
+  \draw[-{Stealth}] (a5) -- (a6);
+  \draw[-{Stealth}] (a6) -- (a7);
+  \draw[-{Stealth}] (a7) -- (e);
 \end{tikzpicture}

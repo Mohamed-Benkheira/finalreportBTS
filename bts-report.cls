@@ -350,27 +350,22 @@
 }
 
 %% ============================================================
-%% CLASS DESCRIPTION TABLE (3 columns: Class | Attributes | Methods)
+%% CLASS DESCRIPTION TABLE (2 columns: Attributes | Methods)
 %% ============================================================
 \NewEnviron{classtable}[1]{%
   \begin{table}[H]
     \centering
     \caption{#1}
     \vspace{0.2cm}
-    \begin{tabularx}{\textwidth}{|>{\bfseries}p{2.5cm}|X|X|}
+    \begin{tabularx}{\textwidth}{|>{\arraybackslash}X|>{\arraybackslash}X|}
       \hline
       \rowcolor{tableheader}
-      \textcolor{white}{\textbf{Class}} & \textcolor{white}{\textbf{Attributes}} & \textcolor{white}{\textbf{Methods}} \\
+      \textcolor{white}{\textbf{Attributes}} & \textcolor{white}{\textbf{Methods}} \\
       \hline
       \BODY
       \hline
     \end{tabularx}
   \end{table}
-}
-
-\newcommand{\clasfield}[3]{%
-  #1 & #2 & #3 \\
-  \hline
 }
 
 %% ============================================================

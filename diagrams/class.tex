@@ -1,64 +1,136 @@
 % class.tex — Fig 3.20 : Simplified class diagram of the domain
 \begin{tikzpicture}[
-  >=Stealth, font=\scriptsize,
-  class/.style={rectangle split, rectangle split parts=3, draw, align=center,
-                rectangle split part fill={black!6, white, white},
-                text width=2.6cm, text centered, inner sep=1.5pt}
-]
-\node[class] (ou) at (0,0) {
-  \textbf{OrganizationUnit}\nodepart{second}+ id, name, type, code\newline+ parent\_id
-  \nodepart{third}+ children()\newline+ getPositions()
-};
-\node[class] (emp) at (4.0,0) {
-  \textbf{Employee}\nodepart{second}+ id, name, phone, email\newline+ org\_unit\_id, position\newline+ workload, availability
-  \nodepart{third}+ assignTo()\newline+ matchingScore()
-};
-\node[class] (user) at (7.6,0) {
-  \textbf{User}\nodepart{second}+ email, password\newline+ 2fa\_enabled
-  \nodepart{third}+ authenticate()\newline+ hasRole()
-};
-\node[class] (proj) at (1.8,-3.0) {
-  \textbf{Project}\nodepart{second}+ name, category, mode\newline+ status, dates
-  \nodepart{third}+ addRequirement()\newline+ activate()
-};
-\node[class] (req) at (5.0,-3.0) {
-  \textbf{Requirement}\nodepart{second}+ type, level\newline+ skill\_id
-  \nodepart{third}+ skills()
-};
-\node[class] (asg) at (8.2,-3.0) {
-  \textbf{Assignment}\nodepart{second}+ status, start\_at\newline+ left\_at, approved\_by
-  \nodepart{third}+ approve()\newline+ complete()
-};
-\node[class] (am) at (11.0,-1.5) {
-  \textbf{AssignmentMember}\nodepart{second}+ role, work\_percent\newline+ employee\_id
-  \nodepart{third}+ member()
-};
-\node[class] (run) at (0.0,-6.0) {
-  \textbf{RecommendationRun}\nodepart{second}+ mode, status\newline+ scores
-  \nodepart{third}+ execute()\newline+ rank()
-};
-\node[class] (rc) at (3.0,-6.0) {
-  \textbf{RecommendedCandidate}\nodepart{second}+ score, rank\newline+ employee\_id
-  \nodepart{third}+ employee()
-};
-\node[class] (pcr) at (6.2,-6.0) {
-  \textbf{ProfileChangeRequest}\nodepart{second}+ type, status\newline+ old/new values
-  \nodepart{third}+ apply()\newline+ approve()
-};
-\node[class] (audit) at (9.6,-6.0) {
-  \textbf{AuditLog}\nodepart{second}+ action, subject\newline+ old/new, ip, ua
-  \nodepart{third}+ actor()
-};
-\draw[thick] (emp) -- node[above, font=\tiny]{1} (user) node[midway, below, font=\tiny]{1};
-\draw[-{Stealth}] (emp) -- node[above, font=\tiny]{works in 1} (ou) node[pos=0.35, below, font=\tiny]{*};
-\draw[-{Stealth}] (ou) to[out=200,in=110] node[below, font=\tiny]{self 1} (ou.south west);
-\draw[-{Stealth}] (proj) -- node[above, font=\tiny]{1} node[below, font=\tiny]{*} (req);
-\draw[-{Stealth}] (proj) -- node[above, font=\tiny]{1} node[below, font=\tiny]{*} (asg);
-\draw[-{Stealth}] (asg) -- node[above, font=\tiny]{1} node[below, font=\tiny]{*} (am);
-\draw[-{Stealth}] (am) -- node[above, font=\tiny]{*} node[below, font=\tiny]{1} (emp);
-\draw[-{Stealth}] (run) -- node[above, font=\tiny]{1} node[below, font=\tiny]{*} (rc);
-\draw[-{Stealth}] (rc) -- node[above, font=\tiny]{*} node[below, font=\tiny]{1} (emp);
-\draw[-{Stealth}] (emp) -- node[above, font=\tiny]{1} node[below, font=\tiny]{*} (pcr);
-\draw[-{Stealth}] (user) to[out=0,in=0] node[right, font=\tiny]{actor *} (audit);
-\draw (11.5,-3.2) to[out=0,in=0] (audit.east) node[right, font=\tiny]{audited *};
+    scale=0.92,
+    transform shape,
+    font=\sffamily,
+    >=Stealth,
+    class/.style={
+      rectangle split,
+      rectangle split parts=3,
+      rectangle split part fill={black!6, white, white},
+      draw=black!75,
+      line width=0.8pt,
+      rounded corners=1.5pt,
+      text width=3.3cm,
+      align=left,
+      inner sep=4pt,
+      font=\fontsize{7.5pt}{9.2pt}\selectfont
+    }
+  ]
+
+  % ============================================================
+  % ROW 1: Organization, Employee, User, AuditLog (y = 0.0)
+  % ============================================================
+  \node[class] (ou) at (0.0, 0.0) {
+    \hfil\textbf{OrganizationUnit}\hfil
+    \nodepart{second}+ id, name, type, code\newline+ parent\_id
+    \nodepart{third}+ children()\newline+ getPositions()
+  };
+
+  \node[class] (emp) at (4.5, 0.0) {
+    \hfil\textbf{Employee}\hfil
+    \nodepart{second}+ id, name, phone, email\newline+ org\_unit\_id, position\newline+ workload, availability
+    \nodepart{third}+ assignTo()\newline+ matchingScore()
+  };
+
+  \node[class] (user) at (8.9, 0.0) {
+    \hfil\textbf{User}\hfil
+    \nodepart{second}+ email, password\newline+ 2fa\_enabled
+    \nodepart{third}+ authenticate()\newline+ hasRole()
+  };
+
+  \node[class] (audit) at (13.3, 0.0) {
+    \hfil\textbf{AuditLog}\hfil
+    \nodepart{second}+ action, subject\newline+ old/new, ip, ua
+    \nodepart{third}+ actor()
+  };
+
+  % ============================================================
+  % ROW 2: Candidates, Profile Requests, Assignment Members, Assignment (y = -3.5)
+  % ============================================================
+  \node[class] (rc) at (0.0, -3.5) {
+    \hfil\textbf{RecommendedCandidate}\hfil
+    \nodepart{second}+ score, rank\newline+ employee\_id
+    \nodepart{third}+ employee()
+  };
+
+  \node[class] (pcr) at (4.5, -3.5) {
+    \hfil\textbf{ProfileChangeRequest}\hfil
+    \nodepart{second}+ type, status\newline+ old/new values
+    \nodepart{third}+ apply()\newline+ approve()
+  };
+
+  \node[class] (am) at (8.9, -3.5) {
+    \hfil\textbf{AssignmentMember}\hfil
+    \nodepart{second}+ role, work\_percent\newline+ employee\_id
+    \nodepart{third}+ member()
+  };
+
+  \node[class] (asg) at (13.3, -3.5) {
+    \hfil\textbf{Assignment}\hfil
+    \nodepart{second}+ status, start\_at\newline+ left\_at, approved\_by
+    \nodepart{third}+ approve()\newline+ complete()
+  };
+
+  % ============================================================
+  % ROW 3: Recommendation Run, Requirements, Project (y = -6.8)
+  % ============================================================
+  \node[class] (run) at (0.0, -6.8) {
+    \hfil\textbf{RecommendationRun}\hfil
+    \nodepart{second}+ mode, status\newline+ scores
+    \nodepart{third}+ execute()\newline+ rank()
+  };
+
+  \node[class] (req) at (8.9, -6.8) {
+    \hfil\textbf{Requirement}\hfil
+    \nodepart{second}+ type, level\newline+ skill\_id
+    \nodepart{third}+ skills()
+  };
+
+  \node[class] (proj) at (13.3, -6.8) {
+    \hfil\textbf{Project}\hfil
+    \nodepart{second}+ name, category, mode\newline+ status, dates
+    \nodepart{third}+ addRequirement()\newline+ activate()
+  };
+
+  % ============================================================
+  % RELATIONSHIPS & ASSOCIATIONS
+  % ============================================================
+
+  % 1. OrganizationUnit self-association (parent / children)
+  \draw[-{Stealth}] (ou.north) -- ++(0, 0.4) -| ([xshift=-0.35cm]ou.west) node[pos=0.25, above, font=\tiny]{parent 0..1} -- (ou.west);
+
+  % 2. Employee works in OrganizationUnit
+  \draw[-{Stealth}] (emp.west) -- node[above, font=\tiny]{works in 1} node[below, font=\tiny]{*} (ou.east);
+
+  % 3. Employee <-> User (1-to-1 account link)
+  \draw[thick] (emp.east) -- node[above, font=\tiny]{1} node[below, font=\tiny]{1} (user.west);
+
+  % 4. User -> AuditLog (actor)
+  \draw[-{Stealth}] (user.east) -- node[above, font=\tiny]{actor 1} node[below, font=\tiny]{*} (audit.west);
+
+  % 5. RecommendationRun -> RecommendedCandidate
+  \draw[-{Stealth}] (run.north) -- node[left, pos=0.15, font=\tiny]{1} node[left, pos=0.85, font=\tiny]{*} (rc.south);
+
+  % 6. RecommendedCandidate -> Employee (orthogonal route through corridor)
+  \draw[-{Stealth}] (rc.north) -- ++(0, 0.6) -| ([xshift=-0.6cm]emp.south) node[pos=0.08, left, font=\tiny]{*} node[pos=0.92, left, font=\tiny]{1};
+
+  % 7. Employee -> ProfileChangeRequest
+  \draw[-{Stealth}] (emp.south) -- node[right, pos=0.15, font=\tiny]{1} node[right, pos=0.85, font=\tiny]{*} (pcr.north);
+
+  % 8. AssignmentMember -> Employee (orthogonal route through corridor)
+  \draw[-{Stealth}] (am.north) -- ++(0, 0.6) -| ([xshift=0.6cm]emp.south) node[pos=0.08, right, font=\tiny]{*} node[pos=0.92, right, font=\tiny]{1};
+
+  % 9. Assignment -> AssignmentMember
+  \draw[-{Stealth}] (asg.west) -- node[above, font=\tiny]{1} node[below, font=\tiny]{*} (am.east);
+
+  % 10. Project -> Assignment
+  \draw[-{Stealth}] (proj.north) -- node[right, pos=0.15, font=\tiny]{1} node[right, pos=0.85, font=\tiny]{*} (asg.south);
+
+  % 11. Project -> Requirement
+  \draw[-{Stealth}] (proj.west) -- node[above, font=\tiny]{1} node[below, font=\tiny]{*} (req.east);
+
+  % 12. Assignment -> AuditLog (audited entities)
+  \draw[-{Stealth}] (asg.north) -- node[right, pos=0.15, font=\tiny]{*} node[right, pos=0.85, font=\tiny]{audited 1} (audit.south);
+
 \end{tikzpicture}

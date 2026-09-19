@@ -1,19 +1,111 @@
-% laravel-mvc.tex — Laravel MVC request lifecycle
+% laravel-mvc.tex — Fig 1.3 : Laravel MVC request lifecycle
 \begin{tikzpicture}[
-  >=Stealth, node distance=1.3cm and 2.4cm,
-  box/.style={draw, rounded corners=3pt, minimum width=3.8cm, minimum height=1.0cm, align=center, font=\small},
-  db/.style={draw, cylinder, shape aspect=0.5, align=center, font=\small, minimum width=2.6cm, minimum height=1.7cm, inner sep=4pt}
+  >=Stealth,
+  font=\sffamily,
+  card/.style={
+    draw=black!75,
+    fill=white,
+    line width=0.8pt,
+    rounded corners=3pt,
+    minimum width=3.7cm,
+    minimum height=1.75cm,
+    align=center,
+    font=\fontsize{7.5pt}{9.2pt}\selectfont
+  }
 ]
-\node[box] (browser) {Browser\\HTTP Request};
-\node[box, right=of browser] (routes) {Routes\\web.php / api.php};
-\node[box, right=of routes] (controller) {Controller\\business logic};
-\node[box, below=of controller] (model) {Eloquent Model\\ORM layer};
-\node[db, below=of model] (db) {Database\\MySQL};
-\node[box, above right=0.6cm and -1.4cm of controller] (view) {View Layer\\Blade / Inertia JSON};
-\draw[->, very thick] (browser) -- (routes);
-\draw[->, very thick] (routes) -- node[above, font=\scriptsize]{dispatch} (controller);
-\draw[<->, very thick] (controller) -- (model);
-\draw[<->, very thick] (model) -- node[right, font=\scriptsize]{SQL} (db);
-\draw[->, very thick] (controller) -- (view);
-\draw[->, very thick] ([yshift=0.35cm]view.west) -| node[above, font=\scriptsize, pos=0.25]{HTTP response} (browser.north);
+
+  % ============================================================
+  % 3x2 SYMMETRICAL ARCHITECTURE GRID
+  % ============================================================
+
+  % --- TOP ROW: INCOMING REQUEST & APPLICATION CORE ---
+
+  % Col 1 Top: Router
+  \node[card] (routes) at (0.0, 0.0) {
+    {\scriptsize\color{black!60}$\langle\langle$routing$\rangle\rangle$}\\[-1pt]
+    \textbf{Router \& Middleware} \\
+    \scriptsize \texttt{web.php} / \texttt{api.php} \\
+    \tiny CSRF, Auth, Session Guard
+  };
+
+  % Col 2 Top: Controller
+  \node[card] (controller) at (6.6, 0.0) {
+    {\scriptsize\color{black!60}$\langle\langle$controller$\rangle\rangle$}\\[-1pt]
+    \textbf{Controller (C)} \\
+    \scriptsize \texttt{app/Http/Controllers/} \\
+    \tiny Form Requests \& Services
+  };
+
+  % Col 3 Top: Eloquent Model
+  \node[card] (model) at (13.2, 0.0) {
+    {\scriptsize\color{black!60}$\langle\langle$model$\rangle\rangle$}\\[-1pt]
+    \textbf{Eloquent Model (M)} \\
+    \scriptsize \texttt{app/Models/} \\
+    \tiny Relations, Enums, Scopes
+  };
+
+  % --- BOTTOM ROW: CLIENT & RENDERING & PERSISTENCE ---
+
+  % Col 1 Bottom: Client Browser
+  \node[card] (browser) at (0.0, -3.4) {
+    {\scriptsize\color{black!60}$\langle\langle$client$\rangle\rangle$}\\[-1pt]
+    \textbf{Client Browser} \\
+    \scriptsize User Agent \\
+    \tiny React 19 SPA / Filament 5 Admin \\
+    \tiny Initiates HTTP / Receives Response
+  };
+
+  % Col 2 Bottom: View Layer
+  \node[card] (view) at (6.6, -3.4) {
+    {\scriptsize\color{black!60}$\langle\langle$view$\rangle\rangle$}\\[-1pt]
+    \textbf{View Layer (V)} \\
+    \scriptsize Blade / Inertia React \\
+    \tiny HTML5 / JSON Props Payload
+  };
+
+  % Col 3 Bottom: Database Server
+  \node[card] (db) at (13.2, -3.4) {
+    {\scriptsize\color{black!60}$\langle\langle$database$\rangle\rangle$}\\[-1pt]
+    \textbf{Database Server} \\
+    \scriptsize PostgreSQL / SQLite \\
+    \tiny ACID Storage, 44 Tables
+  };
+
+  % ============================================================
+  % ORTHOGONAL REQUEST & LIFECYCLE FLOW
+  % ============================================================
+
+  % 1. Browser -> Router (Vertical Request)
+  \draw[-{Stealth}, line width=0.8pt] (browser.north) -- 
+    node[right=3pt, font=\scriptsize\bfseries, align=left]{1. HTTP Request\\{\tiny\normalfont\color{black!70}GET / POST / PUT}} 
+    (routes.south);
+
+  % 2. Router -> Controller (Horizontal Dispatch)
+  \draw[-{Stealth}, line width=0.8pt] (routes.east) -- 
+    node[above=2pt, font=\scriptsize\bfseries]{2. Route Dispatch} 
+    node[below=2pt, font=\tiny\color{black!70}]{Validated Input} 
+    (controller.west);
+
+  % 3. Controller <-> Model (Horizontal ORM Query)
+  \draw[{Stealth}-{Stealth}, line width=0.8pt] (controller.east) -- 
+    node[above=2pt, font=\scriptsize\bfseries]{3. ORM Query} 
+    node[below=2pt, font=\tiny\color{black!70}]{Domain Entities} 
+    (model.west);
+
+  % 4. Model <-> Database (Vertical SQL)
+  \draw[{Stealth}-{Stealth}, line width=0.8pt] (model.south) -- 
+    node[left=3pt, font=\scriptsize\bfseries, align=right]{4. SQL / PDO\\{\tiny\normalfont\color{black!70}Port 5432}} 
+    (db.north);
+
+  % 5. Controller -> View (Vertical Data Pass)
+  \draw[-{Stealth}, line width=0.8pt] (controller.south) -- 
+    node[right=3pt, font=\scriptsize\bfseries, align=left]{5. Passes Props\\{\tiny\normalfont\color{black!70}View Data}} 
+    (view.north);
+
+  % 6. View -> Browser (Horizontal Response)
+  \draw[-{Stealth}, line width=0.8pt] (view.west) -- 
+    node[above=2pt, font=\scriptsize\bfseries]{6. HTTP Response} 
+    node[below=2pt, font=\tiny\color{black!70}]{Rendered HTML / Inertia JSON} 
+    (browser.east);
+
 \end{tikzpicture}

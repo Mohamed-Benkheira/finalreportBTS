@@ -1,17 +1,111 @@
-% rbac.tex — Fig 1.2 : Role-based access control model
+% rbac.tex — Fig 1.4 : Role-based access control model & Spatie matrix
 \begin{tikzpicture}[
-  >=Stealth, node distance=1.1cm and 1.6cm,
-  user/.style={draw, rounded corners=3pt, minimum width=3cm, minimum height=1cm, align=center, font=\small},
-  role/.style={draw, rounded corners=3pt, minimum width=2.8cm, minimum height=0.9cm, align=center, font=\small},
-  perm/.style={draw, rounded corners=3pt, minimum width=3.6cm, minimum height=0.75cm, align=center, font=\small}
+  >=Stealth,
+  font=\sffamily,
+  entity/.style={
+    draw=black!75,
+    fill=white,
+    line width=0.8pt,
+    rounded corners=3pt,
+    minimum width=3.5cm,
+    minimum height=1.5cm,
+    align=center,
+    font=\fontsize{7.5pt}{9.2pt}\selectfont
+  },
+  detailbox/.style={
+    draw=black!55,
+    fill=black!2,
+    rounded corners=3pt,
+    line width=0.6pt,
+    minimum width=3.9cm,
+    minimum height=2.45cm,
+    align=left,
+    inner sep=6pt,
+    font=\fontsize{6.5pt}{8.2pt}\selectfont
+  }
 ]
-\node[user] (u) {User};
-\node[role, right=2.6cm of u] (r) {Role (6 roles)};
-\node[perm, right=2.6cm of r] (p) {Permission (56 perms)};
-\draw[-{Stealth}, thick] (u) -- (r) node[midway, above, font=\scriptsize]{assignRole()};
-\draw[-{Stealth}, thick] (r) -- (p) node[midway, above, font=\scriptsize]{hasMany};
-\node[role, below=0.85cm of r] (roles) {\scriptsize Super Admin / Admin / HR\\\scriptsize Resource Manager / PM / Employee};
-\node[perm, below=0.85cm of p] (perms) {\scriptsize org / employees / projects / assignments\\\scriptsize profile requests / recommendations / users / roles};
-\draw[{Stealth}-{Stealth}, thin] (r.south) -- (roles.north);
-\draw[{Stealth}-{Stealth}, thin] (p.south) -- (perms.north);
+
+  % ============================================================
+  % TOP ROW: CORE RBAC ENTITIES
+  % ============================================================
+  \node[entity] (u) at (0.0, 0.0) {
+    {\scriptsize\color{black!60}$\langle\langle$entity$\rangle\rangle$}\\[-1pt]
+    \textbf{User Account} \\
+    \scriptsize \texttt{App\textbackslash Models\textbackslash User} \\
+    \tiny Uses \texttt{HasRoles} Trait
+  };
+
+  \node[entity] (r) at (6.8, 0.0) {
+    {\scriptsize\color{black!60}$\langle\langle$rbacRole$\rangle\rangle$}\\[-1pt]
+    \textbf{System Roles (6)} \\
+    \scriptsize \texttt{Spatie\textbackslash Models\textbackslash Role} \\
+    \tiny Authorization Grouping
+  };
+
+  \node[entity] (p) at (13.6, 0.0) {
+    {\scriptsize\color{black!60}$\langle\langle$rbacPermission$\rangle\rangle$}\\[-1pt]
+    \textbf{Permissions (52)} \\
+    \scriptsize \texttt{Spatie\textbackslash Models\textbackslash Permission} \\
+    \tiny Granular Operation Rules
+  };
+
+  % ============================================================
+  % BOTTOM ROW: DETAIL SPECIFICATIONS
+  % ============================================================
+  \node[detailbox] (udetail) at (0.0, -2.5) {
+    \textbf{Identity \& Session Guard} \\
+    \textbullet~Authenticatable entity (\texttt{web}) \\
+    \textbullet~Linked to Employee profile \\
+    \textbullet~Role/Permission methods: \\
+    ~~-- \texttt{\$user->hasRole('...')} \\
+    ~~-- \texttt{\$user->can('...')} \\
+    ~~-- \texttt{\$user->assignRole('...')}
+  };
+
+  \node[detailbox] (rdetail) at (6.8, -2.5) {
+    \textbf{The 6 Defined Roles} \\
+    \textbullet~\textbf{Super Admin}: Universal bypass \\
+    \textbullet~\textbf{Admin}: Org \& system setup \\
+    \textbullet~\textbf{HR Manager}: Staff profiles \& certs \\
+    \textbullet~\textbf{Resource Manager}: Allocations \\
+    \textbullet~\textbf{Project Manager}: Project needs \\
+    \textbullet~\textbf{Employee}: Self-service view
+  };
+
+  \node[detailbox] (pdetail) at (13.6, -2.5) {
+    \textbf{14 Domain Groups $\times$ CRUD} \\
+    \textbullet~\textbf{Org}: units, teams, positions, locs \\
+    \textbullet~\textbf{HR}: employees, skills, certs, langs \\
+    \textbullet~\textbf{Projects}: projects, requirements \\
+    \textbullet~\textbf{Staffing}: assignments, recomms \\
+    \textbullet~\textbf{Security}: users, roles, requests \\
+    \textit{Actions: view, create, update, delete}
+  };
+
+  % ============================================================
+  % CONNECTORS & PIVOT ASSOCIATIONS
+  % ============================================================
+
+  % User -> Role (Pivot: model_has_roles)
+  \draw[-{Stealth}, line width=0.8pt] (u) -- 
+    node[above=2pt, font=\scriptsize\bfseries]{assignRole()} 
+    node[below=2pt, font=\tiny\color{black!70}, align=center]{Pivot:\\\texttt{model\_has\_roles}} (r);
+
+  % Role -> Permission (Pivot: role_has_permissions)
+  \draw[-{Stealth}, line width=0.8pt] (r) -- 
+    node[above=2pt, font=\scriptsize\bfseries]{givePermissionTo()} 
+    node[below=2pt, font=\tiny\color{black!70}, align=center]{Pivot:\\\texttt{role\_has\_permissions}} (p);
+
+  % Vertical Links between Entity and Detail Cards
+  \draw[draw=black!40, line width=0.6pt] (u.south) -- (udetail.north);
+  \draw[draw=black!40, line width=0.6pt] (r.south) -- (rdetail.north);
+  \draw[draw=black!40, line width=0.6pt] (p.south) -- (pdetail.north);
+
+  % Overhead Runtime Authorization Gate
+  \draw[-{Stealth}, dashed, line width=0.7pt, black!65] (u.north) 
+    -- ++(0, 0.75) coordinate (topu)
+    -- (p.north |- topu) coordinate (topp)
+       node[midway, above=2pt, font=\scriptsize\bfseries\color{black!80}]{\textbf{Gate::allows()} / \texttt{\$user->can('permission')} (Runtime Check)} 
+    -- (p.north);
+
 \end{tikzpicture}
